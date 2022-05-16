@@ -1,13 +1,22 @@
 import java.sql.*;
 import java.util.*;
+import java.io.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
+        Scanner creds = null;
+        try {
+            creds = new Scanner(new File("env/credentials"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
         System.out.println("Hello, World!");
-        String url = "jdbc:postgresql://ls-cf9a0200fedbfc82507af960bd065ffa98f745d8.cpn0irbq7t2g.us-west-2.rds.amazonaws.com:5432/icecreamshop";
+        String url = creds.nextLine();
         Properties props = new Properties();
-        props.setProperty("user", "icecreamadmin");
-        props.setProperty("password", "cream");
+        props.setProperty("user", creds.nextLine());
+        props.setProperty("password", creds.nextLine());
 
         Connection conn;
         conn = DriverManager.getConnection(url, props);
