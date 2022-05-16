@@ -4,10 +4,10 @@ import java.util.*;
 public class App {
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
-        String url = "jdbc:postgresql://localhost/db03";
+        String url = "jdbc:postgresql://ls-cf9a0200fedbfc82507af960bd065ffa98f745d8.cpn0irbq7t2g.us-west-2.rds.amazonaws.com:5432/icecreamshop";
         Properties props = new Properties();
-        props.setProperty("user", "postgres");
-        props.setProperty("password", "css475");
+        props.setProperty("user", "icecreamadmin");
+        props.setProperty("password", "cream");
         Connection conn;
 
         conn = DriverManager.getConnection(url, props);
