@@ -8,8 +8,8 @@ public class App {
         Properties props = new Properties();
         props.setProperty("user", "icecreamadmin");
         props.setProperty("password", "cream");
-        Connection conn;
 
+        Connection conn;
         conn = DriverManager.getConnection(url, props);
 
         Statement st = conn.createStatement();
