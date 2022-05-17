@@ -26,7 +26,8 @@ public class App {
         executeFile(st, "env/icecreamDB.txt");
         executeFile(st, "env/preloadedQueries.txt");
 
-        ResultSet rs1 = runQuery(st, "EXECUTE getEmployees;");
+        ResultSet rs1 = runQuery(st,
+                "EXECUTE getEmployee(" + "\'jo%\'" + ");");
         ResultSet rs2 = runQuery(st, "SELECT * FROM Employee;");
 
         conn.rollback();
