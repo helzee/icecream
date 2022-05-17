@@ -36,6 +36,14 @@ public class App {
         printRS(runQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');"));
         printRS(runQuery(st, "SELECT * FROM Employee;"));
 
+        // PREPARED STATEMENT VERSION
+        PreparedStatement getEmpByName = conn.prepareStatement(
+                "SELECT firstName, lastName FROM Employee WHERE firstName ILIKE ? AND lastName ILIKE ? ORDER BY firstName, lastName");
+
+        getEmpByName.setString(1, "Josh");
+        getEmpByName.setString(2, "H");
+        printRS(getEmpByName.executeQuery());
+
         conn.rollback();
         st.close();
     }
