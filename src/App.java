@@ -20,7 +20,7 @@ public class App {
         props.setProperty("password", creds.nextLine());
 
         Connection conn = DriverManager.getConnection(url, props);
-        conn.setAutoCommit(false);
+        conn.setAutoCommit(false); // make sure not auto commit changes (allows for rollback and commit)
         Statement st = conn.createStatement();
 
         executeFile(st, "env/icecreamDB.txt");
