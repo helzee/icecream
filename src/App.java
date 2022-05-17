@@ -62,11 +62,13 @@ public class App {
         String toReturn = "";
 
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM Employee");
+
+            ResultSet rs = st.executeQuery(query);
             while (rs.next()) {
                 toReturn += rs.getString(1) + " | " + rs.getString(2);
             }
             rs.close();
+
         } catch (SQLException e) {
             System.out.println("Failed to execute:\n" + query);
             System.exit(1);
