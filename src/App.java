@@ -57,20 +57,16 @@ public class App {
         }
     }
 
-    public static String runQuery(Statement st, String query) {
-        String toReturn = "";
+    public static ResultSet runQuery(Statement st, String query) {
 
         try {
-            ResultSet rs = st.executeQuery("SELECT * FROM Employee");
-            while (rs.next()) {
-                toReturn += rs.getString(1) + " | " + rs.getString(2);
-            }
-            rs.close();
+            return st.executeQuery(query);
+
         } catch (SQLException e) {
             System.out.println("Failed to execute :\n" + query);
             System.exit(1);
         }
 
-        return toReturn;
+        return null;
     }
 }
