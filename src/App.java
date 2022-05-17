@@ -26,8 +26,8 @@ public class App {
         executeFile(st, "env/icecreamDB.txt");
         executeFile(st, "env/preloadedQueries.txt");
 
-        System.out.println(runQuery(st, "EXECUTE getEmployees;"));
-        System.out.println(runQuery(st, "SELECT * FROM Employee;"));
+        ResultSet rs1 = runQuery(st, "EXECUTE getEmployees;");
+        ResultSet rs2 = runQuery(st, "SELECT * FROM Employee;");
 
         conn.rollback();
         st.close();
@@ -46,6 +46,7 @@ public class App {
                 // System.out.println(nextLine);
                 st.execute(nextLine);
             }
+
             System.out.println("Finished executing file \'" + filePath + "\'");
             fileScanner.close();
 
@@ -58,22 +59,15 @@ public class App {
         }
     }
 
-    public static String runQuery(Statement st, String query) {
-        String toReturn = "";
-
+    public static ResultSet runQuery(Statement st, String query) {
         try {
-
-            ResultSet rs = st.executeQuery(query);
-            while (rs.next()) {
-                toReturn += rs.getString(1) + " | " + rs.getString(2);
-            }
-            rs.close();
+            return st.executeQuery(query);
 
         } catch (SQLException e) {
             System.out.println("Failed to execute:\n" + query);
             System.exit(1);
         }
 
-        return toReturn;
+        return null;
     }
 }
