@@ -3,3 +3,8 @@ PREPARE getEmployee ( text ) AS
     FROM Employee
     WHERE firstName ILIKE $1 OR lastName ILIKE $1
     ORDER BY firstName, lastName;
+
+PREPARE badgeAvail ( text ) AS
+    SELECT COUNT(*)
+    FROM Employee
+    WHERE badgeNumber = $1;

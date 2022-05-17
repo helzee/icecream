@@ -1,2 +1,2 @@
-bin/App.class
+bin/*.class
 env/credentials

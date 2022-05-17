@@ -1,5 +1,5 @@
 INSERT INTO Employee (badgeNumber, firstName, lastName, phoneNumber, email)
-VALUES  ( 'X123', 'Josh', 'Helzerman', '123-456-7890', 'josh@gmail.com'),
-        ( 'X234', 'Alex', 'Lambert', '123-456-7891', 'alex@gmail.com'),
-        ( 'X345', 'Brennan', 'Ayers', '123-456-7892', 'brennan@gmail.com'),
-        ( 'X456', 'Griffin', 'Detracy', '123-456-7893', 'griffin@gmail.com');
+VALUES  ( 'X12345', 'Josh', 'Helzerman', '123-456-7890', 'josh@gmail.com'),
+        ( 'X23456', 'Alex', 'Lambert', '123-456-7891', 'alex@gmail.com'),
+        ( 'X34567', 'Brennan', 'Ayers', '123-456-7892', 'brennan@gmail.com'),
+        ( 'X45678', 'Griffin', 'Detracy', '123-456-7893', 'griffin@gmail.com');

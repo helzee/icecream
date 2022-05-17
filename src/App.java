@@ -36,7 +36,7 @@ public class App {
         // PREPARED STATEMENT VERSION
         Exec.printRS(getEmployee("Griffin", "%"));
 
-        Insert.insertEmployee("Y432", "jimmy", "bob", "222-333-4444",
+        Insert.insertEmployee("jimmy", "bob", "222-333-4444",
                 "jimmybob@bob.com");
 
         Exec.printQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');");
