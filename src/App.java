@@ -81,9 +81,24 @@ public class App {
     public static void printRS(ResultSet rs) {
         try {
             ResultSetMetaData md = rs.getMetaData();
-            printColNames(md);
 
             int cols = md.getColumnCount();
+            int[] colWidths = printColNames(md);
+            int totalWidth = colWidths[0];
+            String toPrint;
+            int colWidth;
+
+            while (rs.next()) {
+                for (int col = 1; col <= cols; col++) {
+                    toPrint = rs.getString(col);
+                    colWidth = Math.min(colWidths[col], toPrint.length());
+
+                    System.out.print(toPrint.substring(0, colWidth));
+                    System.out.print(
+                            " ".repeat(colWidths[col] - colWidth) + " | ");
+                }
+                System.out.println();
+            }
 
         } catch (SQLException e) {
             System.out.println("Could not print ResultSet");
@@ -91,18 +106,21 @@ public class App {
     }
 
     // Returns the total width of the table
-    private static int printColNames(ResultSetMetaData md)
+    private static int[] printColNames(ResultSetMetaData md)
             throws SQLException {
         int cols = md.getColumnCount();
         String colName;
         int colWidth, colNameWidth;
+        int[] colWidths = new int[cols + 1];
         int totalWidth = 0;
 
         System.out.println();
 
-        for (int col = 1; col < cols; col++) {
+        for (int col = 1; col <= cols; col++) {
 
             colWidth = Math.min(md.getColumnDisplaySize(col), maxColSize);
+            colWidths[col] = colWidth;
+
             colNameWidth = Math.min(md.getColumnLabel(col).length(), colWidth);
             colName = md.getColumnLabel(col).substring(0, colNameWidth);
             totalWidth += colWidth + 3;
@@ -111,14 +129,9 @@ public class App {
             System.out.print(" ".repeat(colWidth - colNameWidth) + " | ");
         }
 
-        // Print the last column name
-        colWidth = Math.min(md.getColumnDisplaySize(cols), maxColSize);
-        colNameWidth = Math.min(md.getColumnLabel(cols).length(), colWidth);
-        colName = md.getColumnLabel(cols).substring(0, colNameWidth);
-        totalWidth += colWidth;
+        System.out.println("\n" + "-".repeat(totalWidth));
 
-        System.out.println(colName);
-        System.out.println("-".repeat(totalWidth));
-        return totalWidth;
+        colWidths[0] = totalWidth;
+        return colWidths;
     }
 }
