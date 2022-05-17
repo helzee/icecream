@@ -24,7 +24,10 @@ public class Insert {
             insertEmployee.setString(3, lastName);
             insertEmployee.setString(4, phoneNumber);
             insertEmployee.setString(5, email);
-            return insertEmployee.executeUpdate();
+
+            int toReturn = insertEmployee.executeUpdate();
+            insertEmployee.close();
+            return toReturn;
 
         } catch (SQLException e) {
             System.out.println("Could not insert employee: " + badgeNumber
@@ -52,8 +55,11 @@ public class Insert {
                         "EXECUTE badgeAvail(\'" + newBadge + "\');");
                 System.out.println("Proposed Badge = " + newBadge);
                 rs.next();
-                if (rs.getInt(1) == 0)
+                if (rs.getInt(1) == 0) {
+                    rs.close();
+                    st.close();
                     return newBadge;
+                }
             }
 
         } catch (SQLException e) {
