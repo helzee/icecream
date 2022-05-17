@@ -1,0 +1,4 @@
+INSERT INTO Employee (badgeNumber, firstName, lastName, phoneNumber, email)
+VALUES  ( 'X123', 'Josh', 'Helzerman', '123-456-7890', 'josh@gmail.com'),
+        ( 'X234', 'Alex', 'Lambert', '123-456-7891', 'alex@gmail.com'),
+        ( 'X345', 'Brennan', 'Ayers', '123-456-7892', 'brennan@gmail.com');
