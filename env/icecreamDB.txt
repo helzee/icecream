@@ -1,0 +1,117 @@
+CREATE DATABASE icecreamdb;
+\c icecreamdb
+
+CREATE TABLE Item (
+	ID 		serial NOT NULL,
+	name 		character varying(32) NOT NULL,
+	description 	character varying(256) NOT NULL,
+	unitIsOunces 	boolean NOT NULL,
+	avgCostPerUnit 	numeric(10,2) NOT NULL,
+
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE ItemLoss (
+	itemID 		serial NOT NULL,
+	timeOfOccurance timestamp NOT NULL,
+	unitsLost 	numeric(10,2) NOT NULL,
+	reason		character varying(256) NOT NULL,
+
+	PRIMARY KEY (itemID, timeOfOccurance),
+	FOREIGN KEY (itemID) REFERENCES Item(ID) DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE MenuCategory (
+	ID 	serial NOT NULL,
+	name 	character varying(32) NOT NULL UNIQUE,
+
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE MenuProduct (
+	ID 		serial NOT NULL,
+	categoryID 	integer NOT NULL,
+	currentPrice 	numeric(10,2) NOT NULL,
+	name 		character varying(32) NOT NULL,
+	description 	character varying(256) NOT NULL,
+	isOffered 	boolean NOT NULL,
+
+	PRIMARY KEY (ID),
+	FOREIGN KEY (categoryID) REFERENCES MenuCategory(ID) DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE ProductIngredients (
+	productID 	integer NOT NULL,
+	itemID 		integer NOT NULL,
+	unitsNeeded 	numeric(10,2) NOT NULL,
+
+	PRIMARY KEY (productID, itemID),
+	FOREIGN KEY (productID) REFERENCES MenuProduct(ID) DEFERRABLE INITIALLY DEFERRED,
+	FOREIGN KEY (itemID) REFERENCES Item(ID) DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE Employee (
+	ID 			serial NOT NULL,
+	badgeNumber 		character varying(16) NOT NULL UNIQUE,
+	firstName 		character varying(32) NOT NULL,
+	lastName 		character varying(32) NOT NULL,
+	phoneNumber 		character varying(16) NOT NULL,
+	email 			character varying(100) NOT NULL UNIQUE,
+
+	PRIMARY KEY (ID)
+);
+
+CREATE TABLE Transaction (
+	ID 			serial NOT NULL,
+	employeeWorking 	integer NOT NULL,
+	transactionNumber 	character varying(16) NOT NULL UNIQUE,
+	timeCompleted		timestamp NOT NULL,
+
+	PRIMARY KEY (ID),
+	FOREIGN KEY (employeeWorking) REFERENCES Employee(ID) DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE TransactionProduct (
+	ID 		serial NOT NULL,
+	productID	integer NOT NULL,
+	transactionID	integer NOT NULL,
+	salesPrice 	numeric(10,2) NOT NULL,
+	isRefunded 	boolean NOT NULL,
+
+	PRIMARY KEY (ID),
+	FOREIGN KEY (productID) REFERENCES MenuProduct(ID) DEFERRABLE INITIALLY DEFERRED,
+	FOREIGN KEY (transactionID) REFERENCES Transaction(ID) DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE MenuModification (
+	ID 		serial NOT NULL,
+	itemID		integer NOT NULL,
+	unitsNeeded	numeric(10,2) NOT NULL,
+	currentPrice 	numeric(10,2) NOT NULL,
+	name 		character varying(32) NOT NULL,
+	description	character varying(256) NOT NULL,
+	isOffered 	boolean NOT NULL,
+
+	PRIMARY KEY (ID),
+	FOREIGN KEY (itemID) REFERENCES Item(ID) DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE Modification (
+	transactionProductID 	integer NOT NULL,
+	menuModificationID 	integer NOT NULL,
+	isRemovingIngredient 	boolean NOT NULL,
+	isRefunded 		boolean NOT NULL,
+	salesCost 		numeric(10,2) NOT NULL,
+
+	PRIMARY KEY (transactionProductID, menuModificationID),
+	FOREIGN KEY (transactionProductID) REFERENCES TransactionProduct(ID) DEFERRABLE INITIALLY DEFERRED,
+	FOREIGN KEY (menuModificationID) REFERENCES MenuModification(ID) DEFERRABLE INITIALLY DEFERRED
+);
+
+\c postgres
+\c icecreamdb
+
+\d
+
+\c postgres
+DROP DATABASE icecreamdb;
