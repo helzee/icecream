@@ -24,10 +24,10 @@ public class App {
         Statement st = conn.createStatement();
 
         executeFile(st, "env/icecreamDB.txt");
-        executeFile(st, "env/preloadedQueries.txt");
+        executeFile(st, "env/preparedQueries.txt");
 
         ResultSet rs1 = runQuery(st,
-                "EXECUTE getEmployee(" + "\'jo%\'" + ");");
+                "EXECUTE getEmployee(\'" + "jo%" + "\');");
         ResultSet rs2 = runQuery(st, "SELECT * FROM Employee;");
 
         conn.rollback();
