@@ -52,8 +52,30 @@ public class App {
         // we could hide prepared statements in functions like this
         printRS(getEmployee("Alex", "Lambert"));
 
+        // make methods for all CRUD commands. This sanitizes inputs and minimizes the
+        // code required. We could even make a badgeNumber generator function for unique
+        // badge numbers.
+        insertEmployee("Y432", "jimmy", "bob", "222-333-4444",
+                "jimmybob@bob.com");
+
+        printRS(runQuery(st, "SELECT * FROM Employee;"));
+
         conn.rollback();
         st.close();
+    }
+
+    public static int insertEmployee(String badgeNumber, String firstName,
+            String lastName, String phoneNumber, String email)
+            throws SQLException {
+        PreparedStatement insertEmployee = conn.prepareStatement(
+                "INSERT INTO Employee (badgeNumber, firstName, lastName, phoneNumber, email)"
+                        + "VALUES (?,?,?,?,?)");
+        insertEmployee.setString(1, badgeNumber);
+        insertEmployee.setString(2, firstName);
+        insertEmployee.setString(3, lastName);
+        insertEmployee.setString(4, phoneNumber);
+        insertEmployee.setString(5, email);
+        return insertEmployee.executeUpdate();
     }
 
     public static ResultSet getEmployee(String firstName, String lastName)
