@@ -13,52 +13,63 @@ public class App {
         }
 
         System.out.println("Hello, World!");
+
         String url = creds.nextLine();
         Properties props = new Properties();
         props.setProperty("user", creds.nextLine());
         props.setProperty("password", creds.nextLine());
 
-        Connection conn;
-        conn = DriverManager.getConnection(url, props);
+        Connection conn = DriverManager.getConnection(url, props);
+        conn.setAutoCommit(false);
         Statement st = conn.createStatement();
 
-        conn.setAutoCommit(false);
+        executeFile(st, "env/icecreamDB.txt");
+        executeFile(st, "env/preloadedQueries.txt");
 
-        Scanner makeDB = new Scanner(new File("env/icecreamDB.txt"));
-        makeDB.useDelimiter(";");
-
-        while (makeDB.hasNext()) {
-            String nextLine = makeDB.next() + ";";
-            System.out.println(nextLine);
-            st.execute(nextLine);
-        }
-
-        Scanner makePreloaded = new Scanner(
-                new File("env/preloadedQueries.txt"));
-        makePreloaded.useDelimiter(";");
-
-        while (makePreloaded.hasNext()) {
-            String nextLine = makePreloaded.next() + ";";
-            System.out.println(nextLine);
-            st.execute(nextLine);
-        }
-
-        ResultSet prepRS = st.executeQuery("EXECUTE getEmployees;");
-        while (prepRS.next()) {
-            System.out.print("Column 1 returned ");
-            System.out.println(
-                    prepRS.getString(1) + " | " + prepRS.getString(2));
-        }
-
-        ResultSet rs = st.executeQuery("SELECT * FROM Employee");
-        while (rs.next()) {
-            System.out.print("Column 1 returned ");
-            System.out.println(rs.getString(1) + " | " + rs.getString(2));
-        }
+        System.out.println(runQuery(st, "EXECUTE getEmployees;"));
+        System.out.println(runQuery(st, "SELECT * FROM Employee;"));
 
         conn.rollback();
-
-        rs.close();
         st.close();
+    }
+
+    public static void executeFile(Statement st, String filePath) {
+        String nextLine = "";
+
+        try {
+            Scanner fileScanner = new Scanner(new File(filePath));
+            fileScanner.useDelimiter(";");
+
+            while (fileScanner.hasNext()) {
+                nextLine = fileScanner.next() + ";";
+                System.out.println(nextLine);
+                st.execute(nextLine);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            System.exit(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to execute :\n" + nextLine);
+            System.exit(1);
+        }
+    }
+
+    public static String runQuery(Statement st, String query) {
+        String toReturn = "";
+
+        try {
+            ResultSet rs = st.executeQuery("SELECT * FROM Employee");
+            while (rs.next()) {
+                toReturn += rs.getString(1) + " | " + rs.getString(2);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            System.out.println("Failed to execute :\n" + query);
+            System.exit(1);
+        }
+
+        return toReturn;
     }
 }
