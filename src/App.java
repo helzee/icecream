@@ -5,6 +5,7 @@ import java.io.*;
 public class App {
 
     private static int maxColSize = 20;
+    private static Connection conn;
 
     public static void main(String[] args) throws Exception {
         Scanner creds = null;
@@ -22,7 +23,7 @@ public class App {
         props.setProperty("user", creds.nextLine());
         props.setProperty("password", creds.nextLine());
 
-        Connection conn = DriverManager.getConnection(url, props);
+        conn = DriverManager.getConnection(url, props);
 
         // make sure not auto commit changes (allows for rollback and commit)
         conn.setAutoCommit(false);
@@ -44,8 +45,25 @@ public class App {
         getEmpByName.setString(2, "Helzerman");
         printRS(getEmpByName.executeQuery());
 
+        getEmpByName.setString(1, "Griffin");
+        getEmpByName.setString(2, "Detracy");
+        printRS(getEmpByName.executeQuery());
+
+        // we could hide prepared statements in functions like this
+        printRS(getEmployee("Alex", "Lambert"));
+
         conn.rollback();
         st.close();
+    }
+
+    public static ResultSet getEmployee(String firstName, String lastName)
+            throws SQLException {
+        PreparedStatement getEmpByName = conn.prepareStatement(
+                "SELECT firstName, lastName FROM Employee WHERE firstName ILIKE ? AND lastName ILIKE ? ORDER BY firstName, lastName");
+        getEmpByName.setString(1, firstName);
+        getEmpByName.setString(2, lastName);
+        return getEmpByName.executeQuery();
+
     }
 
     public static void executeFile(Statement st, String filePath) {
