@@ -37,21 +37,23 @@ public class App {
         String nextLine = "";
 
         try {
+
             Scanner fileScanner = new Scanner(new File(filePath));
             fileScanner.useDelimiter(";");
 
             while (fileScanner.hasNext()) {
                 nextLine = fileScanner.next() + ";";
-                System.out.println(nextLine);
+                // System.out.println(nextLine);
                 st.execute(nextLine);
             }
+            System.out.println("Finished executing file \'" + filePath + "\'");
+            fileScanner.close();
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Could not find file: " + filePath);
             System.exit(1);
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to execute :\n" + nextLine);
+            System.out.println("Failed to execute:\n" + nextLine);
             System.exit(1);
         }
     }
@@ -66,7 +68,7 @@ public class App {
             }
             rs.close();
         } catch (SQLException e) {
-            System.out.println("Failed to execute :\n" + query);
+            System.out.println("Failed to execute:\n" + query);
             System.exit(1);
         }
 
