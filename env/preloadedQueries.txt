@@ -1,4 +1,5 @@
-PREPARE getEmployees AS
+PREPARE getEmployee ( text ) AS
     SELECT firstName, lastName
     FROM Employee
+    WHERE firstName ILIKE $1 OR lastName ILIKE $1
     ORDER BY firstName, lastName;
