@@ -1,0 +1,4 @@
+PREPARE getEmployees AS
+    SELECT firstName, lastName
+    FROM Employee
+    ORDER BY firstName, lastName;
