@@ -27,50 +27,37 @@ public class App {
 
         // make sure not auto commit changes (allows for rollback and commit)
         conn.setAutoCommit(false);
-
         Statement st = conn.createStatement();
 
-        exec.executeFile(st, "env/icecreamDB.txt");
-        exec.executeFile(st, "env/populateData.txt");
-        exec.executeFile(st, "env/preparedQueries.txt");
-
-        exec.printQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');");
-        exec.printQuery(st, "SELECT * FROM Employee;");
+        Exec.executeFile(st, "env/icecreamDB.txt");
+        Exec.executeFile(st, "env/populateData.txt");
+        Exec.executeFile(st, "env/preparedQueries.txt");
 
         // PREPARED STATEMENT VERSION
-        PreparedStatement getEmpByName = conn.prepareStatement(
-                "SELECT firstName, lastName FROM Employee WHERE firstName ILIKE ? AND lastName ILIKE ? ORDER BY firstName, lastName");
+        Exec.printRS(getEmployee("Griffin", "%"));
 
-        getEmpByName.setString(1, "Josh");
-        getEmpByName.setString(2, "Helzerman");
-        exec.printRS(getEmpByName.executeQuery());
-
-        getEmpByName.setString(1, "Griffin");
-        getEmpByName.setString(2, "Detracy");
-        exec.printRS(getEmpByName.executeQuery());
-
-        // we could hide prepared statements in functions like this
-        exec.printRS(getEmployee("Alex", "Lambert"));
-
-        // make methods for all CRUD commands. This sanitizes inputs and minimizes the
-        // code required. We could even make a badgeNumber generator function for unique
-        // badge numbers.
         Insert.insertEmployee("Y432", "jimmy", "bob", "222-333-4444",
                 "jimmybob@bob.com");
 
-        exec.printQuery(st, "SELECT * FROM Employee;");
+        Exec.printQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');");
+        Exec.printQuery(st, "SELECT * FROM Employee;");
 
         conn.rollback();
         st.close();
     }
 
-    public static ResultSet getEmployee(String firstName, String lastName)
-            throws SQLException {
-        PreparedStatement getEmpByName = conn.prepareStatement(
-                "SELECT firstName, lastName FROM Employee WHERE firstName ILIKE ? AND lastName ILIKE ? ORDER BY firstName, lastName");
-        getEmpByName.setString(1, firstName);
-        getEmpByName.setString(2, lastName);
-        return getEmpByName.executeQuery();
+    public static ResultSet getEmployee(String firstName, String lastName) {
+        try {
+            PreparedStatement getEmpByName = conn.prepareStatement(
+                    "SELECT firstName, lastName FROM Employee WHERE firstName ILIKE ? AND lastName ILIKE ? ORDER BY firstName, lastName");
+            getEmpByName.setString(1, firstName);
+            getEmpByName.setString(2, lastName);
+            return getEmpByName.executeQuery();
 
+        } catch (SQLException e) {
+            System.out.println(
+                    "Failed to getEmployee " + firstName + "  " + lastName);
+            return null;
+        }
     }
 }
