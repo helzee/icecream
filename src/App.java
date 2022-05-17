@@ -41,7 +41,7 @@ public class App {
                 "SELECT firstName, lastName FROM Employee WHERE firstName ILIKE ? AND lastName ILIKE ? ORDER BY firstName, lastName");
 
         getEmpByName.setString(1, "Josh");
-        getEmpByName.setString(2, "H");
+        getEmpByName.setString(2, "Helzerman");
         printRS(getEmpByName.executeQuery());
 
         conn.rollback();
