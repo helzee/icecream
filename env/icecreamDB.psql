@@ -97,7 +97,6 @@ CREATE TABLE Modification (
 	transactionProductID 	integer NOT NULL,
 	menuModificationID 	integer NOT NULL,
 	isRemovingIngredient 	boolean NOT NULL,
-	isRefunded 		boolean NOT NULL,
 	salesCost 		numeric(10,2) NOT NULL,
 	isOffered		boolean NOT NULL,
 
