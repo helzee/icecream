@@ -9,6 +9,7 @@ public class Transaction {
             'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
             'V', 'W', 'X', 'Y', 'Z' };
     public static final int txNumberSize = 10;
+    private String txNumber;
     private LinkedList<PreparedStatement> commands;
 
     public Transaction(String badgeNumber) throws SQLException {
@@ -29,7 +30,7 @@ public class Transaction {
 
     private void initializeTransaction(int employeeID) throws SQLException {
         commands = new LinkedList<PreparedStatement>();
-        String txNumber = getTxNumber();
+        txNumber = getTxNumber();
 
         PreparedStatement newTx = App.conn.prepareStatement(
                 "INSERT INTO Transaction (employeeWorking, transactionNumber, timeCompleted)"
@@ -47,9 +48,13 @@ public class Transaction {
                 toReturn = ps.executeUpdate();
                 ps.close();
 
-                if (toReturn != 1)
+                if (toReturn != 1) {
+                    App.conn.rollback();
                     return false;
+                }
             }
+
+            // App.conn.commit();
             return true;
 
         } catch (SQLException e) {

@@ -99,6 +99,7 @@ CREATE TABLE Modification (
 	isRemovingIngredient 	boolean NOT NULL,
 	isRefunded 		boolean NOT NULL,
 	salesCost 		numeric(10,2) NOT NULL,
+	isOffered		boolean NOT NULL,
 
 	PRIMARY KEY (transactionProductID, menuModificationID),
 	FOREIGN KEY (transactionProductID) REFERENCES TransactionProduct(ID) DEFERRABLE INITIALLY DEFERRED,
