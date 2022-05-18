@@ -47,7 +47,8 @@ public class App {
         nexTx.finishTransaction();
         Execute.printQuery(st, "SELECT * FROM Transaction;");
 
-        Insert.insertItem("Vanilla", "desc", true, new BigDecimal(1.5));
+        System.out.println("Item ID = " + Insert.insertItem("Vanilla", "desc",
+                true, new BigDecimal(1.5)));
         Execute.printQuery(st, "SELECT * FROM ITEM;");
 
         conn.rollback();

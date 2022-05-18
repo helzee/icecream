@@ -25,12 +25,30 @@ public class Insert {
 
             int toReturn = newItem.executeUpdate();
             newItem.close();
-            return toReturn;
+
+            if (toReturn != 1) {
+                // App.conn.rollback();
+                return -1;
+            }
+
+            PreparedStatement itemID = App.conn
+                    .prepareStatement("SELECT ID FROM Item WHERE name = ?;");
+            itemID.setString(1, name);
+
+            ResultSet rs = itemID.executeQuery();
+            rs.next();
+            int newID = rs.getInt(1);
+            rs.close();
+            itemID.close();
+
+            // App.conn.commit();
+            return newID;
 
         } catch (SQLException e) {
+            e.printStackTrace();
             System.out.println("Could not insert item: " + name + " " + desc
                     + " " + unitIsOz + " " + avgCostPerUnit);
-            return 0;
+            return -1;
         }
     }
 
