@@ -4,37 +4,39 @@ import java.util.Random;
 
 public class Transaction {
 
-    private static final char[] txChars = new char[] { 'A', 'B', 'C', 'D', 'E',
-            'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-            'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5',
-            '6', '7', '8', '9', '0' };
+    private static final char[] txChars = new char[] { '1', '2', '3', '4', '5',
+            '6', '7', '8', '9', '0', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+            'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+            'V', 'W', 'X', 'Y', 'Z' };
     public static final int txNumberSize = 10;
-
     private LinkedList<PreparedStatement> commands;
 
-    public Transaction(String badgeNumber) {
+    public Transaction(String badgeNumber) throws SQLException {
+        Statement st = App.conn.createStatement();
+        ResultSet rs = Exec.runQuery(st,
+                "EXECUTE getEmployeeID(\'" + badgeNumber + "\');");
+        rs.next();
+        int employeeID = rs.getInt(1);
+        rs.close();
+        st.close();
+
+        initializeTransaction(employeeID);
+    }
+
+    public Transaction(int employeeID) throws SQLException {
+        initializeTransaction(employeeID);
+    }
+
+    private void initializeTransaction(int employeeID) throws SQLException {
         commands = new LinkedList<PreparedStatement>();
         String txNumber = getTxNumber();
 
-        try {
-            Statement st = App.conn.createStatement();
-            ResultSet rs = Exec.runQuery(st,
-                    "EXECUTE getEmployeeID(\'" + badgeNumber + "\');");
-            rs.next();
-            int employeeID = rs.getInt(1);
-            rs.close();
-            st.close();
-
-            PreparedStatement newTx = App.conn.prepareStatement(
-                    "INSERT INTO Transaction (employeeWorking, transactionNumber, timeCompleted)"
-                            + " VALUES (?,?,\'now\'::timestamp)");
-            newTx.setInt(1, employeeID);
-            newTx.setString(2, txNumber);
-            commands.add(newTx);
-
-        } catch (SQLException e) {
-            System.out.println("Could not create transaction: " + badgeNumber);
-        }
+        PreparedStatement newTx = App.conn.prepareStatement(
+                "INSERT INTO Transaction (employeeWorking, transactionNumber, timeCompleted)"
+                        + " VALUES (?,?,\'now\'::timestamp)");
+        newTx.setInt(1, employeeID);
+        newTx.setString(2, txNumber);
+        commands.add(newTx);
     }
 
     public boolean finishTransaction() {
@@ -67,7 +69,8 @@ public class Transaction {
 
             while (true) {
                 for (int i = 0; i < txNumberSize; i++)
-                    newTxNum += Character.toString(txChars[gen.nextInt(36)]);
+                    newTxNum += Character
+                            .toString(txChars[gen.nextInt(46) % 36]);
 
                 rs = Exec.runQuery(st,
                         "EXECUTE txAvail(\'" + newTxNum + "\');");
@@ -85,5 +88,4 @@ public class Transaction {
             return null;
         }
     }
-
 }
