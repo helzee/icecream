@@ -4,7 +4,7 @@ import java.io.*;
 
 public class App {
 
-    public static final int maxColSize = 20;
+    public static final int maxColSize = 30;
     public static Connection conn;
 
     public static void main(String[] args) throws Exception {
@@ -29,9 +29,9 @@ public class App {
         conn.setAutoCommit(false);
         Statement st = conn.createStatement();
 
-        Exec.executeFile(st, "env/icecreamDB.txt");
-        Exec.executeFile(st, "env/populateData.txt");
-        Exec.executeFile(st, "env/preparedQueries.txt");
+        Exec.executeFile(st, "env/icecreamDB.psql");
+        Exec.executeFile(st, "env/populateData.psql");
+        Exec.executeFile(st, "env/preparedQueries.psql");
 
         // PREPARED STATEMENT VERSION
         Exec.printRS(getEmployee("Griffin", "%"));
@@ -41,6 +41,10 @@ public class App {
 
         Exec.printQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');");
         Exec.printQuery(st, "SELECT * FROM Employee;");
+
+        Transaction nexTx = new Transaction("X12345");
+        nexTx.finishTransaction();
+        Exec.printQuery(st, "SELECT * FROM Transaction;");
 
         conn.rollback();
         st.close();

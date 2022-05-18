@@ -1,3 +1,2 @@
-bin/*.class
 env/credentials
-bin/Insert.class
+*.class

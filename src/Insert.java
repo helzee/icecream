@@ -53,7 +53,6 @@ public class Insert {
 
                 rs = Exec.runQuery(st,
                         "EXECUTE badgeAvail(\'" + newBadge + "\');");
-                System.out.println("Proposed Badge = " + newBadge);
                 rs.next();
                 if (rs.getInt(1) == 0) {
                     rs.close();

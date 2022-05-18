@@ -4,7 +4,17 @@ PREPARE getEmployee ( text ) AS
     WHERE firstName ILIKE $1 OR lastName ILIKE $1
     ORDER BY firstName, lastName;
 
+PREPARE getEmployeeID ( text ) AS
+    SELECT ID
+    FROM Employee
+    WHERE badgeNumber = $1;
+
 PREPARE badgeAvail ( text ) AS
     SELECT COUNT(*)
     FROM Employee
     WHERE badgeNumber = $1;
+    
+PREPARE txAvail ( text ) AS
+    SELECT COUNT(*)
+    FROM Transaction
+    WHERE transactionNumber = $1;
