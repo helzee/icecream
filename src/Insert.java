@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.Random;
 
@@ -9,6 +10,29 @@ public class Insert {
     private static char[] badgeNums = new char[] { '1', '2', '3', '4', '5',
             '6', '7', '8', '9', '0' };
     public static final int badgeNumberSize = 6;
+
+    public static int insertItem(String name, String desc, boolean unitIsOz,
+            BigDecimal avgCostPerUnit) {
+
+        try {
+            PreparedStatement newItem = App.conn.prepareStatement(
+                    "INSERT INTO Item (name, description, unitIsOunces, avgCostPerUnit)"
+                            + "VALUES (?,?,?,?)");
+            newItem.setString(1, name);
+            newItem.setString(2, desc);
+            newItem.setBoolean(3, unitIsOz);
+            newItem.setBigDecimal(4, avgCostPerUnit);
+
+            int toReturn = newItem.executeUpdate();
+            newItem.close();
+            return toReturn;
+
+        } catch (SQLException e) {
+            System.out.println("Could not insert item: " + name + " " + desc
+                    + " " + unitIsOz + " " + avgCostPerUnit);
+            return 0;
+        }
+    }
 
     public static int insertEmployee(String firstName, String lastName,
             String phoneNumber, String email) {
