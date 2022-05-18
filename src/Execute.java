@@ -2,7 +2,7 @@ import java.sql.*;
 import java.util.*;
 import java.io.*;
 
-public class Exec {
+public class Execute {
 
     public static void executeFile(Statement st, String filePath) {
         String nextLine = "";

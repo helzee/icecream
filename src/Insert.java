@@ -51,7 +51,7 @@ public class Insert {
                 for (int i = 1; i < badgeNumberSize; i++)
                     newBadge += Character.toString(badgeNums[gen.nextInt(10)]);
 
-                rs = Exec.runQuery(st,
+                rs = Execute.runQuery(st,
                         "EXECUTE badgeAvail(\'" + newBadge + "\');");
                 rs.next();
                 if (rs.getInt(1) == 0) {

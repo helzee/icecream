@@ -29,22 +29,22 @@ public class App {
         conn.setAutoCommit(false);
         Statement st = conn.createStatement();
 
-        Exec.executeFile(st, "env/icecreamDB.psql");
-        Exec.executeFile(st, "env/populateData.psql");
-        Exec.executeFile(st, "env/preparedQueries.psql");
+        Execute.executeFile(st, "env/icecreamDB.psql");
+        Execute.executeFile(st, "env/populateData.psql");
+        Execute.executeFile(st, "env/preparedQueries.psql");
 
         // PREPARED STATEMENT VERSION
-        Exec.printRS(getEmployee("Griffin", "%"));
+        Execute.printRS(getEmployee("Griffin", "%"));
 
         Insert.insertEmployee("jimmy", "bob", "222-333-4444",
                 "jimmybob@bob.com");
 
-        Exec.printQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');");
-        Exec.printQuery(st, "SELECT * FROM Employee;");
+        Execute.printQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');");
+        Execute.printQuery(st, "SELECT * FROM Employee;");
 
         Transaction nexTx = new Transaction("X12345");
         nexTx.finishTransaction();
-        Exec.printQuery(st, "SELECT * FROM Transaction;");
+        Execute.printQuery(st, "SELECT * FROM Transaction;");
 
         conn.rollback();
         st.close();

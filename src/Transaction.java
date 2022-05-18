@@ -14,7 +14,7 @@ public class Transaction {
 
     public Transaction(String badgeNumber) throws SQLException {
         Statement st = App.conn.createStatement();
-        ResultSet rs = Exec.runQuery(st,
+        ResultSet rs = Execute.runQuery(st,
                 "EXECUTE getEmployeeID(\'" + badgeNumber + "\');");
         rs.next();
         int employeeID = rs.getInt(1);
@@ -77,7 +77,7 @@ public class Transaction {
                     newTxNum += Character
                             .toString(txChars[gen.nextInt(46) % 36]);
 
-                rs = Exec.runQuery(st,
+                rs = Execute.runQuery(st,
                         "EXECUTE txAvail(\'" + newTxNum + "\');");
                 rs.next();
                 if (rs.getInt(1) == 0) {
