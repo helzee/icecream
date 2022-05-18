@@ -11,42 +11,85 @@ public class Insert {
             '6', '7', '8', '9', '0' };
     public static final int badgeNumberSize = 6;
 
-    public static boolean insertMenuMod(int itemID, BigDecimal unitsNeeded,
-            BigDecimal currentPrice, String name, String desc,
-            boolean isOffered) {
+    public static int insertMenuCategory(String name) {
+
+        try {
+            PreparedStatement newCategory = App.conn.prepareStatement(
+                    "INSERT INTO MenuCategory (name) VALUES (?)");
+            newCategory.setString(1, name);
+
+            int toReturn = newCategory.executeUpdate();
+            newCategory.close();
+
+            if (toReturn != 1) {
+                // App.conn.rollback();
+                return -1;
+            }
+
+            PreparedStatement categoryID = App.conn.prepareStatement(
+                    "SELECT ID FROM MenuCategory WHERE name = ?;");
+            categoryID.setString(1, name);
+
+            ResultSet rs = categoryID.executeQuery();
+            rs.next();
+            int newID = rs.getInt(1);
+            rs.close();
+            categoryID.close();
+
+            // App.conn.commit();
+            return newID;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Could not insert menu category: " + name);
+            return -1;
+        }
+    }
+
+    public static int insertMenuMod(int itemID, double unitsNeeded,
+            double currentPrice, String name, String desc) {
 
         try {
             PreparedStatement newMenuMod = App.conn.prepareStatement(
                     "INSERT INTO MenuModification (itemID, unitsNeeded, currentPrice, name, description, isOffered)"
-                            + "VALUES (?,?,?,?,?,?)");
+                            + "VALUES (?,?,?,?,?,true)");
             newMenuMod.setInt(1, itemID);
-            newMenuMod.setBigDecimal(2, unitsNeeded);
-            newMenuMod.setBigDecimal(3, currentPrice);
+            newMenuMod.setBigDecimal(2, new BigDecimal(unitsNeeded));
+            newMenuMod.setBigDecimal(3, new BigDecimal(currentPrice));
             newMenuMod.setString(4, name);
             newMenuMod.setString(5, desc);
-            newMenuMod.setBoolean(6, isOffered);
 
             int toReturn = newMenuMod.executeUpdate();
             newMenuMod.close();
 
             if (toReturn != 1) {
                 // App.conn.rollback();
-                return false;
+                return -1;
             }
 
+            PreparedStatement menuModID = App.conn.prepareStatement(
+                    "SELECT ID FROM MenuModification WHERE name = ? AND isOffered = true;");
+            menuModID.setString(1, name);
+
+            ResultSet rs = menuModID.executeQuery();
+            rs.next();
+            int newID = rs.getInt(1);
+            rs.close();
+            menuModID.close();
+
             // App.conn.commit();
-            return true;
+            return newID;
 
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Could not insert MenuModification: " + itemID
                     + " " + name);
-            return false;
+            return -1;
         }
     }
 
     public static int insertItem(String name, String desc, boolean unitIsOz,
-            BigDecimal avgCostPerUnit) {
+            double avgCostPerUnit) {
 
         try {
             PreparedStatement newItem = App.conn.prepareStatement(
@@ -55,7 +98,7 @@ public class Insert {
             newItem.setString(1, name);
             newItem.setString(2, desc);
             newItem.setBoolean(3, unitIsOz);
-            newItem.setBigDecimal(4, avgCostPerUnit);
+            newItem.setBigDecimal(4, new BigDecimal(avgCostPerUnit));
 
             int toReturn = newItem.executeUpdate();
             newItem.close();
