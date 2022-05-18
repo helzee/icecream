@@ -11,6 +11,40 @@ public class Insert {
             '6', '7', '8', '9', '0' };
     public static final int badgeNumberSize = 6;
 
+    public static boolean insertMenuMod(int itemID, BigDecimal unitsNeeded,
+            BigDecimal currentPrice, String name, String desc,
+            boolean isOffered) {
+
+        try {
+            PreparedStatement newMenuMod = App.conn.prepareStatement(
+                    "INSERT INTO MenuModification (itemID, unitsNeeded, currentPrice, name, description, isOffered)"
+                            + "VALUES (?,?,?,?,?,?)");
+            newMenuMod.setInt(1, itemID);
+            newMenuMod.setBigDecimal(2, unitsNeeded);
+            newMenuMod.setBigDecimal(3, currentPrice);
+            newMenuMod.setString(4, name);
+            newMenuMod.setString(5, desc);
+            newMenuMod.setBoolean(6, isOffered);
+
+            int toReturn = newMenuMod.executeUpdate();
+            newMenuMod.close();
+
+            if (toReturn != 1) {
+                // App.conn.rollback();
+                return false;
+            }
+
+            // App.conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Could not insert MenuModification: " + itemID
+                    + " " + name);
+            return false;
+        }
+    }
+
     public static int insertItem(String name, String desc, boolean unitIsOz,
             BigDecimal avgCostPerUnit) {
 

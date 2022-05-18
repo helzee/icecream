@@ -47,9 +47,13 @@ public class App {
         nexTx.finishTransaction();
         Execute.printQuery(st, "SELECT * FROM Transaction;");
 
-        System.out.println("Item ID = " + Insert.insertItem("Vanilla", "desc",
-                true, new BigDecimal(1.5)));
-        Execute.printQuery(st, "SELECT * FROM ITEM;");
+        Insert.insertItem("Vanilla", "desc", true, new BigDecimal(1.5));
+        int sprinkleID = Insert.insertItem("Sprinkles", "desc2", true,
+                new BigDecimal(0.001));
+        Insert.insertMenuMod(sprinkleID, new BigDecimal(0.7),
+                new BigDecimal(0.01), "Sprinkles", "desc2", true);
+        Execute.printQuery(st, "SELECT * FROM Item;");
+        Execute.printQuery(st, "SELECT * FROM MenuModification;");
 
         conn.rollback();
         st.close();
