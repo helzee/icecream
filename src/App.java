@@ -46,6 +46,7 @@ public class App {
         int txProd = newTx.addProduct(van1Scoop);
         newTx.addProductModification(txProd, modID);
         newTx.removeProductIngredient(txProd, vanillaID);
+        Insert.insertItemLoss(vanillaID, 4.5, "Slipped");
 
         conn.rollback();
         st.close();
