@@ -46,33 +46,13 @@ public class Insert {
         try {
             PreparedStatement newMenuProd = App.conn.prepareStatement(
                     "INSERT INTO MenuProduct (categoryID, currentPrice, name, description, isOffered)"
-                            + "VALUES (?,?,?,?,true)");
+                            + "VALUES (?,?,?,?,true) RETURNING ID");
             newMenuProd.setInt(1, categoryID);
             newMenuProd.setBigDecimal(2, new BigDecimal(currentPrice));
             newMenuProd.setString(3, name);
             newMenuProd.setString(4, desc);
 
-            int toReturn = newMenuProd.executeUpdate();
-            newMenuProd.close();
-
-            if (toReturn != 1) {
-                // App.conn.rollback();
-                return -1;
-            }
-
-            PreparedStatement menuProdID = App.conn.prepareStatement(
-                    "SELECT ID FROM MenuProduct WHERE name = ? AND categoryID = ? AND isOffered = true;");
-            menuProdID.setString(1, name);
-            menuProdID.setInt(2, categoryID);
-
-            ResultSet rs = menuProdID.executeQuery();
-            rs.next();
-            int newID = rs.getInt(1);
-            rs.close();
-            menuProdID.close();
-
-            // App.conn.commit();
-            return newID;
+            return execAndFetchID(newMenuProd);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -86,29 +66,10 @@ public class Insert {
 
         try {
             PreparedStatement newCategory = App.conn.prepareStatement(
-                    "INSERT INTO MenuCategory (name) VALUES (?)");
+                    "INSERT INTO MenuCategory (name) VALUES (?) RETURNING ID");
             newCategory.setString(1, name);
 
-            int toReturn = newCategory.executeUpdate();
-            newCategory.close();
-
-            if (toReturn != 1) {
-                // App.conn.rollback();
-                return -1;
-            }
-
-            PreparedStatement categoryID = App.conn.prepareStatement(
-                    "SELECT ID FROM MenuCategory WHERE name = ?;");
-            categoryID.setString(1, name);
-
-            ResultSet rs = categoryID.executeQuery();
-            rs.next();
-            int newID = rs.getInt(1);
-            rs.close();
-            categoryID.close();
-
-            // App.conn.commit();
-            return newID;
+            return execAndFetchID(newCategory);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -123,33 +84,14 @@ public class Insert {
         try {
             PreparedStatement newMenuMod = App.conn.prepareStatement(
                     "INSERT INTO MenuModification (itemID, unitsNeeded, currentPrice, name, description, isOffered)"
-                            + "VALUES (?,?,?,?,?,true)");
+                            + "VALUES (?,?,?,?,?,true) RETURNING ID");
             newMenuMod.setInt(1, itemID);
             newMenuMod.setBigDecimal(2, new BigDecimal(unitsNeeded));
             newMenuMod.setBigDecimal(3, new BigDecimal(currentPrice));
             newMenuMod.setString(4, name);
             newMenuMod.setString(5, desc);
 
-            int toReturn = newMenuMod.executeUpdate();
-            newMenuMod.close();
-
-            if (toReturn != 1) {
-                // App.conn.rollback();
-                return -1;
-            }
-
-            PreparedStatement menuModID = App.conn.prepareStatement(
-                    "SELECT ID FROM MenuModification WHERE name = ? AND isOffered = true;");
-            menuModID.setString(1, name);
-
-            ResultSet rs = menuModID.executeQuery();
-            rs.next();
-            int newID = rs.getInt(1);
-            rs.close();
-            menuModID.close();
-
-            // App.conn.commit();
-            return newID;
+            return execAndFetchID(newMenuMod);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -165,32 +107,13 @@ public class Insert {
         try {
             PreparedStatement newItem = App.conn.prepareStatement(
                     "INSERT INTO Item (name, description, unitIsOunces, avgCostPerUnit)"
-                            + "VALUES (?,?,?,?)");
+                            + "VALUES (?,?,?,?) RETURNING ID;");
             newItem.setString(1, name);
             newItem.setString(2, desc);
             newItem.setBoolean(3, unitIsOz);
             newItem.setBigDecimal(4, new BigDecimal(avgCostPerUnit));
 
-            int toReturn = newItem.executeUpdate();
-            newItem.close();
-
-            if (toReturn != 1) {
-                // App.conn.rollback();
-                return -1;
-            }
-
-            PreparedStatement itemID = App.conn
-                    .prepareStatement("SELECT ID FROM Item WHERE name = ?;");
-            itemID.setString(1, name);
-
-            ResultSet rs = itemID.executeQuery();
-            rs.next();
-            int newID = rs.getInt(1);
-            rs.close();
-            itemID.close();
-
-            // App.conn.commit();
-            return newID;
+            return execAndFetchID(newItem);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -206,24 +129,22 @@ public class Insert {
         String badgeNumber = getBadgeNumber();
 
         try {
-            PreparedStatement insertEmployee = App.conn.prepareStatement(
+            PreparedStatement newEmployee = App.conn.prepareStatement(
                     "INSERT INTO Employee (badgeNumber, firstName, lastName, phoneNumber, email)"
-                            + "VALUES (?,?,?,?,?)");
-            insertEmployee.setString(1, badgeNumber);
-            insertEmployee.setString(2, firstName);
-            insertEmployee.setString(3, lastName);
-            insertEmployee.setString(4, phoneNumber);
-            insertEmployee.setString(5, email);
+                            + "VALUES (?,?,?,?,?) RETURNING ID;");
+            newEmployee.setString(1, badgeNumber);
+            newEmployee.setString(2, firstName);
+            newEmployee.setString(3, lastName);
+            newEmployee.setString(4, phoneNumber);
+            newEmployee.setString(5, email);
 
-            int toReturn = insertEmployee.executeUpdate();
-            insertEmployee.close();
-            return toReturn;
+            return execAndFetchID(newEmployee);
 
         } catch (SQLException e) {
             System.out.println("Could not insert employee: " + badgeNumber
                     + " " + firstName + " " + lastName + " " + phoneNumber
                     + " " + email);
-            return 0;
+            return -1;
         }
     }
 
@@ -258,4 +179,21 @@ public class Insert {
         }
     }
 
+    private static int execAndFetchID(PreparedStatement ps)
+            throws SQLException {
+        if (!ps.execute()) {
+            ps.close();
+            // App.conn.rollback();
+            return -1;
+        }
+
+        ResultSet rs = ps.getResultSet();
+        rs.next();
+        int newID = rs.getInt(1);
+        rs.close();
+        ps.close();
+
+        // App.conn.commit();
+        return newID;
+    }
 }

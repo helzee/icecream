@@ -1,6 +1,6 @@
 CREATE TABLE Item (
 	ID 		serial NOT NULL,
-	name 		character varying(32) NOT NULL UNIQUE,
+	name 		character varying(32) NOT NULL,
 	description 	character varying(256) NOT NULL,
 	unitIsOunces 	boolean NOT NULL,
 	avgCostPerUnit 	numeric(10,3) NOT NULL,
