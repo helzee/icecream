@@ -64,25 +64,47 @@ public class Transaction {
             newTxProd.setInt(2, txID);
             newTxProd.setBigDecimal(3, currentPrice);
 
-            if (!newTxProd.execute()) {
-                newTxProd.close();
-                // App.conn.rollback();
-                return -1;
-            }
-
-            ResultSet rs = newTxProd.getResultSet();
-            rs.next();
-            int newID = rs.getInt(1);
-            rs.close();
-            newTxProd.close();
-
-            return newID;
+            return Execute.execAndFetchID(newTxProd);
 
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Could not insert TransactionProduct: "
                     + productID + " " + txNumber);
             return -1;
+        }
+    }
+
+    public boolean addProductModification(int txProdID, int menuModID) {
+
+        try {
+            PreparedStatement findPrice = App.conn.prepareStatement(
+                    "SELECT currentPrice FROM MenuModification WHERE ID = ?;");
+            findPrice.setInt(1, menuModID);
+            ResultSet rs = findPrice.executeQuery();
+            rs.next();
+            BigDecimal currentPrice = rs.getBigDecimal(1);
+            rs.close();
+            findPrice.close();
+
+            PreparedStatement newProdMod = App.conn.prepareStatement(
+                    "INSERT INTO Modification (transactionProductID, menuModificationID, salesPrice)"
+                            + "VALUES (?,?,?);");
+            newProdMod.setInt(1, txProdID);
+            newProdMod.setInt(2, menuModID);
+            newProdMod.setBigDecimal(3, currentPrice);
+
+            if (newProdMod.executeUpdate() != 1)
+                throw new SQLException();
+
+            // App.conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            // App.conn.rollback();
+            e.printStackTrace();
+            System.out.println("Could not insert Product Modification: "
+                    + txProdID + " " + menuModID);
+            return false;
         }
     }
 

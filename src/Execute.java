@@ -108,4 +108,21 @@ public class Execute {
     public static void printQuery(Statement st, String query) {
         printRS(runQuery(st, query));
     }
+
+    public static int execAndFetchID(PreparedStatement ps)
+            throws SQLException {
+        if (!ps.execute()) {
+            ps.close();
+            throw new SQLException();
+        }
+
+        ResultSet rs = ps.getResultSet();
+        rs.next();
+        int newID = rs.getInt(1);
+        rs.close();
+        ps.close();
+
+        return newID;
+    }
+
 }

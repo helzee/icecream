@@ -52,7 +52,7 @@ public class Insert {
             newMenuProd.setString(3, name);
             newMenuProd.setString(4, desc);
 
-            return execAndFetchID(newMenuProd);
+            return Execute.execAndFetchID(newMenuProd);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -69,7 +69,7 @@ public class Insert {
                     "INSERT INTO MenuCategory (name) VALUES (?) RETURNING ID");
             newCategory.setString(1, name);
 
-            return execAndFetchID(newCategory);
+            return Execute.execAndFetchID(newCategory);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,7 +91,7 @@ public class Insert {
             newMenuMod.setString(4, name);
             newMenuMod.setString(5, desc);
 
-            return execAndFetchID(newMenuMod);
+            return Execute.execAndFetchID(newMenuMod);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,7 +113,7 @@ public class Insert {
             newItem.setBoolean(3, unitIsOz);
             newItem.setBigDecimal(4, new BigDecimal(avgCostPerUnit));
 
-            return execAndFetchID(newItem);
+            return Execute.execAndFetchID(newItem);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -138,7 +138,7 @@ public class Insert {
             newEmployee.setString(4, phoneNumber);
             newEmployee.setString(5, email);
 
-            return execAndFetchID(newEmployee);
+            return Execute.execAndFetchID(newEmployee);
 
         } catch (SQLException e) {
             System.out.println("Could not insert employee: " + badgeNumber
@@ -177,21 +177,5 @@ public class Insert {
             System.exit(1);
             return null;
         }
-    }
-
-    private static int execAndFetchID(PreparedStatement ps)
-            throws SQLException {
-        if (!ps.execute()) {
-            ps.close();
-            throw new SQLException();
-        }
-
-        ResultSet rs = ps.getResultSet();
-        rs.next();
-        int newID = rs.getInt(1);
-        rs.close();
-        ps.close();
-
-        return newID;
     }
 }

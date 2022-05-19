@@ -96,11 +96,18 @@ CREATE TABLE MenuModification (
 CREATE TABLE Modification (
 	transactionProductID 	integer NOT NULL,
 	menuModificationID 	integer NOT NULL,
-	isRemovingIngredient 	boolean NOT NULL,
-	salesCost 		numeric(10,2) NOT NULL,
-	isOffered		boolean NOT NULL,
+	salesPrice 		numeric(10,2) NOT NULL,
 
 	PRIMARY KEY (transactionProductID, menuModificationID),
 	FOREIGN KEY (transactionProductID) REFERENCES TransactionProduct(ID) DEFERRABLE INITIALLY DEFERRED,
 	FOREIGN KEY (menuModificationID) REFERENCES MenuModification(ID) DEFERRABLE INITIALLY DEFERRED
+);
+
+CREATE TABLE RemoveIngredient (
+	transactionProductID 	integer NOT NULL,
+	itemID 	integer NOT NULL,
+
+	PRIMARY KEY (transactionProductID, itemID),
+	FOREIGN KEY (transactionProductID) REFERENCES TransactionProduct(ID) DEFERRABLE INITIALLY DEFERRED,
+	FOREIGN KEY (itemID) REFERENCES Item(ID) DEFERRABLE INITIALLY DEFERRED
 );

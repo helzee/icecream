@@ -35,12 +35,8 @@ public class App {
                 "jimmybob@bob.com");
         int vanillaID = Insert.insertItem("Vanilla", "desc", true, 1.5);
         int sprinkleID = Insert.insertItem("Sprinkles", "desc2", true, 0.001);
-
         int modID = Insert.insertMenuMod(sprinkleID, 0.7, 0.01, "Sprinkles",
                 "desc2");
-        Execute.printQuery(st,
-                "SELECT * FROM MenuModification WHERE ID = " + modID + ";");
-
         int sundaeID = Insert.insertMenuCategory("Sundae");
         int van1Scoop = Insert.insertMenuProduct(sundaeID, 1.4,
                 "Vanilla Sundae", "desc3");
@@ -48,8 +44,8 @@ public class App {
 
         Transaction newTx = new Transaction(jimmyID);
         newTx.addProduct(van1Scoop);
-        Execute.printQuery(st, "SELECT * FROM Transaction;");
-        Execute.printQuery(st, "SELECT * FROM TransactionProduct;");
+        newTx.addProductModification(van1Scoop, modID);
+        Execute.printQuery(st, "SELECT * FROM Modification;");
 
         conn.rollback();
         st.close();
