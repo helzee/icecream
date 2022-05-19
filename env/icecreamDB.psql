@@ -3,7 +3,7 @@ CREATE TABLE Item (
 	name 		character varying(32) NOT NULL UNIQUE,
 	description 	character varying(256) NOT NULL,
 	unitIsOunces 	boolean NOT NULL,
-	avgCostPerUnit 	numeric(10,2) NOT NULL,
+	avgCostPerUnit 	numeric(10,3) NOT NULL,
 
 	PRIMARY KEY (ID)
 );

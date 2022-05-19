@@ -1,7 +1,6 @@
 import java.sql.*;
 import java.util.*;
 import java.io.*;
-import java.math.BigDecimal;
 
 public class App {
 
@@ -47,9 +46,17 @@ public class App {
         nexTx.finishTransaction();
         Execute.printQuery(st, "SELECT * FROM Transaction;");
 
-        System.out.println("Item ID = " + Insert.insertItem("Vanilla", "desc",
-                true, new BigDecimal(1.5)));
-        Execute.printQuery(st, "SELECT * FROM ITEM;");
+        Insert.insertItem("Vanilla", "desc", true, 1.5);
+        int sprinkleID = Insert.insertItem("Sprinkles", "desc2", true, 0.001);
+        int modID = Insert.insertMenuMod(sprinkleID, 0.7, 0.01, "Sprinkles",
+                "desc2");
+        Execute.printQuery(st, "SELECT * FROM Item;");
+        Execute.printQuery(st,
+                "SELECT * FROM MenuModification WHERE ID = " + modID + ";");
+
+        int sundaeID = Insert.insertMenuCategory("Sundae");
+        Execute.printQuery(st,
+                "SELECT * FROM MenuCategory WHERE ID = " + sundaeID + ";");
 
         conn.rollback();
         st.close();
