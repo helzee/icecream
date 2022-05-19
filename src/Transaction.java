@@ -13,13 +13,11 @@ public class Transaction {
     private int txID;
 
     public Transaction(String badgeNumber) throws SQLException {
-        Statement st = App.conn.createStatement();
-        ResultSet rs = Execute.runQuery(st,
-                "EXECUTE getEmployeeID(\'" + badgeNumber + "\');");
+        ResultSet rs = Execute
+                .runQuery("EXECUTE getEmployeeID(\'" + badgeNumber + "\');");
         rs.next();
         int employeeID = rs.getInt(1);
         rs.close();
-        st.close();
 
         initializeTransaction(employeeID);
     }
@@ -111,13 +109,11 @@ public class Transaction {
     public boolean removeProductIngredient(int txProdID, int itemID) {
 
         try {
-            Statement st = App.conn.createStatement();
-            ResultSet rs = st.executeQuery("EXECUTE itemPartOfTxProd(\'"
+            ResultSet rs = App.st.executeQuery("EXECUTE itemPartOfTxProd(\'"
                     + txProdID + " \',\'" + itemID + "\');");
             rs.next();
             int count = rs.getInt(1);
             rs.close();
-            st.close();
             if (count != 1)
                 throw new SQLException();
 
@@ -144,14 +140,12 @@ public class Transaction {
 
     public boolean finishTransaction() {
         try {
-            Statement st = App.conn.createStatement();
-            int count = st.executeUpdate(
-                    "UPDATE Transaction SET timeCompleted = \'now\'::timestamp WHERE transactionID = "
+            int count = App.st.executeUpdate(
+                    "UPDATE Transaction SET timeCompleted = \'now\'::timestamp WHERE ID = "
                             + txID);
             if (count != 1)
                 throw new SQLException();
 
-            st.close();
             // App.conn.commit();
             return true;
 
@@ -165,24 +159,20 @@ public class Transaction {
 
     private static String getTxNumber() {
         String newTxNum = "";
-        Statement st;
         ResultSet rs;
         Random gen = new Random();
 
         try {
-            st = App.conn.createStatement();
-
             while (true) {
                 for (int i = 0; i < txNumberSize; i++)
                     newTxNum += Character
                             .toString(txChars[gen.nextInt(46) % 36]);
 
-                rs = Execute.runQuery(st,
-                        "EXECUTE txAvail(\'" + newTxNum + "\');");
+                rs = Execute
+                        .runQuery("EXECUTE txAvail(\'" + newTxNum + "\');");
                 rs.next();
                 if (rs.getInt(1) == 0) {
                     rs.close();
-                    st.close();
                     return newTxNum;
                 }
             }

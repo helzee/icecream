@@ -6,8 +6,25 @@ public class App {
 
     public static final int maxColSize = 30;
     public static Connection conn;
+    public static Statement st;
 
     public static void main(String[] args) throws Exception {
+        setUpConn();
+
+        // Do not need to run, it is permanent now
+        /* Execute.executeFile(st, "env/icecreamDB.psql"); */
+
+        // Disappears after run time, must run every time
+        Execute.executeFile("env/preparedQueries.psql");
+
+        basicTest1();
+
+        st.close();
+
+        Gui.build();
+    }
+
+    private static void setUpConn() throws SQLException {
         Scanner creds = null;
         try {
             creds = new Scanner(new File("env/credentials"));
@@ -25,11 +42,12 @@ public class App {
 
         // make sure not auto commit changes (allows for rollback and commit)
         conn.setAutoCommit(false);
-        Statement st = conn.createStatement();
 
-        Execute.executeFile(st, "env/icecreamDB.psql");
-        Execute.executeFile(st, "env/populateData.psql");
-        Execute.executeFile(st, "env/preparedQueries.psql");
+        st = conn.createStatement();
+    }
+
+    private static void basicTest1() throws SQLException {
+        Execute.executeFile("env/populateData.psql");
 
         int jimmyID = Insert.insertEmployee("jimmy", "bob", "222-333-4444",
                 "jimmybob@bob.com");
@@ -46,11 +64,9 @@ public class App {
         int txProd = newTx.addProduct(van1Scoop);
         newTx.addProductModification(txProd, modID);
         newTx.removeProductIngredient(txProd, vanillaID);
+        newTx.finishTransaction();
         Insert.insertItemLoss(vanillaID, 4.5, "Slipped");
 
         conn.rollback();
-        st.close();
-
-        Gui.build();
     }
 }

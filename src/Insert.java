@@ -178,24 +178,20 @@ public class Insert {
 
     private static String getBadgeNumber() {
         String newBadge;
-        Statement st;
         ResultSet rs;
         Random gen = new Random();
 
         try {
-            st = App.conn.createStatement();
-
             while (true) {
                 newBadge = Character.toString(badgeChars[gen.nextInt(26)]);
                 for (int i = 1; i < badgeNumberSize; i++)
                     newBadge += Character.toString(badgeNums[gen.nextInt(10)]);
 
-                rs = Execute.runQuery(st,
-                        "EXECUTE badgeAvail(\'" + newBadge + "\');");
+                rs = Execute
+                        .runQuery("EXECUTE badgeAvail(\'" + newBadge + "\');");
                 rs.next();
                 if (rs.getInt(1) == 0) {
                     rs.close();
-                    st.close();
                     return newBadge;
                 }
             }

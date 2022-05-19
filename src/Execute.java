@@ -4,7 +4,7 @@ import java.io.*;
 
 public class Execute {
 
-    public static void executeFile(Statement st, String filePath) {
+    public static void executeFile(String filePath) {
         String nextLine = "";
 
         try {
@@ -15,7 +15,7 @@ public class Execute {
             while (fileScanner.hasNext()) {
                 nextLine = fileScanner.next() + ";";
                 // System.out.println(nextLine);
-                st.execute(nextLine);
+                App.st.execute(nextLine);
             }
 
             System.out.println("Finished executing file \'" + filePath + "\'");
@@ -30,9 +30,9 @@ public class Execute {
         }
     }
 
-    public static ResultSet runQuery(Statement st, String query) {
+    public static ResultSet runQuery(String query) {
         try {
-            return st.executeQuery(query);
+            return App.st.executeQuery(query);
 
         } catch (SQLException e) {
             System.out.println("Failed to execute :\n" + query);
@@ -105,8 +105,8 @@ public class Execute {
         return colWidths;
     }
 
-    public static void printQuery(Statement st, String query) {
-        printRS(runQuery(st, query));
+    public static void printQuery(String query) {
+        printRS(runQuery(query));
     }
 
     public static int execAndFetchID(PreparedStatement ps)
