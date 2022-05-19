@@ -11,6 +11,35 @@ public class Insert {
             '6', '7', '8', '9', '0' };
     public static final int badgeNumberSize = 6;
 
+    public static boolean insertProductIngredient(int productID, int itemID,
+            double unitsNeeded) {
+
+        try {
+            PreparedStatement newMenuProd = App.conn.prepareStatement(
+                    "INSERT INTO ProductIngredient (productID, itemID, unitsNeeded)"
+                            + "VALUES (?,?,?)");
+            newMenuProd.setInt(1, productID);
+            newMenuProd.setInt(2, itemID);
+            newMenuProd.setBigDecimal(3, new BigDecimal(unitsNeeded));
+
+            int toReturn = newMenuProd.executeUpdate();
+            newMenuProd.close();
+
+            if (toReturn != 1) {
+                // App.conn.rollback();
+                return false;
+            }
+            // App.conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Could not insert Product Ingredient: "
+                    + productID + " " + itemID);
+            return false;
+        }
+    }
+
     public static int insertMenuProduct(int categoryID, double currentPrice,
             String name, String desc) {
 

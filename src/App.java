@@ -42,11 +42,7 @@ public class App {
         Execute.printQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');");
         Execute.printQuery(st, "SELECT * FROM Employee;");
 
-        Transaction nexTx = new Transaction("X12345");
-        nexTx.finishTransaction();
-        Execute.printQuery(st, "SELECT * FROM Transaction;");
-
-        Insert.insertItem("Vanilla", "desc", true, 1.5);
+        int vanillaID = Insert.insertItem("Vanilla", "desc", true, 1.5);
         int sprinkleID = Insert.insertItem("Sprinkles", "desc2", true, 0.001);
         int modID = Insert.insertMenuMod(sprinkleID, 0.7, 0.01, "Sprinkles",
                 "desc2");
@@ -62,6 +58,14 @@ public class App {
                 "Vanilla Sundae", "desc3");
         Execute.printQuery(st,
                 "SELECT * FROM MenuProduct WHERE ID = " + van1Scoop + ";");
+
+        Insert.insertProductIngredient(van1Scoop, vanillaID, 4.7);
+        Execute.printQuery(st, "SELECT * FROM ProductIngredient;");
+
+        Transaction newTx = new Transaction("X12345");
+        newTx.addProduct(van1Scoop);
+        Execute.printQuery(st, "SELECT * FROM Transaction;");
+        Execute.printQuery(st, "SELECT * FROM TransactionProduct;");
 
         conn.rollback();
         st.close();

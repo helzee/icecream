@@ -37,7 +37,7 @@ CREATE TABLE MenuProduct (
 	FOREIGN KEY (categoryID) REFERENCES MenuCategory(ID) DEFERRABLE INITIALLY DEFERRED
 );
 
-CREATE TABLE ProductIngredients (
+CREATE TABLE ProductIngredient (
 	productID 	integer NOT NULL,
 	itemID 		integer NOT NULL,
 	unitsNeeded 	numeric(10,2) NOT NULL,

@@ -1,6 +1,6 @@
 import java.sql.*;
 import java.util.*;
-import java.util.Random;
+import java.math.BigDecimal;
 
 public class Transaction {
 
@@ -10,7 +10,7 @@ public class Transaction {
             'V', 'W', 'X', 'Y', 'Z' };
     public static final int txNumberSize = 10;
     private String txNumber;
-    private LinkedList<PreparedStatement> commands;
+    private int txID;
 
     public Transaction(String badgeNumber) throws SQLException {
         Statement st = App.conn.createStatement();
@@ -29,37 +29,60 @@ public class Transaction {
     }
 
     private void initializeTransaction(int employeeID) throws SQLException {
-        commands = new LinkedList<PreparedStatement>();
         txNumber = getTxNumber();
 
         PreparedStatement newTx = App.conn.prepareStatement(
                 "INSERT INTO Transaction (employeeWorking, transactionNumber, timeCompleted)"
-                        + " VALUES (?,?,\'now\'::timestamp)");
+                        + " VALUES (?,?,\'now\'::timestamp) RETURNING ID;");
         newTx.setInt(1, employeeID);
         newTx.setString(2, txNumber);
-        commands.add(newTx);
+        if (!newTx.execute())
+            throw new SQLException();
+
+        ResultSet rs = newTx.getResultSet();
+        rs.next();
+        txID = rs.getInt(1);
+        rs.close();
+        newTx.close();
     }
 
-    public boolean finishTransaction() {
-
+    public int addProduct(int productID) {
         try {
-            int toReturn;
-            for (PreparedStatement ps : commands) {
-                toReturn = ps.executeUpdate();
-                ps.close();
+            PreparedStatement findPrice = App.conn.prepareStatement(
+                    "SELECT currentPrice FROM MenuProduct WHERE ID = ?;");
+            findPrice.setInt(1, productID);
+            ResultSet rs1 = findPrice.executeQuery();
+            rs1.next();
+            BigDecimal currentPrice = rs1.getBigDecimal(1);
+            rs1.close();
+            findPrice.close();
 
-                if (toReturn != 1) {
-                    App.conn.rollback();
-                    return false;
-                }
+            PreparedStatement newTxProd = App.conn.prepareStatement(
+                    "INSERT INTO TransactionProduct (productID, transactionID, salesPrice, isRefunded)"
+                            + "VALUES (?,?,?,true) RETURNING ID;");
+            newTxProd.setInt(1, productID);
+            newTxProd.setInt(2, txID);
+            newTxProd.setBigDecimal(3, currentPrice);
+
+            if (!newTxProd.execute()) {
+                newTxProd.close();
+                // App.conn.rollback();
+                return -1;
             }
 
-            // App.conn.commit();
-            return true;
+            ResultSet rs = newTxProd.getResultSet();
+            rs.next();
+            int newID = rs.getInt(1);
+            rs.close();
+            newTxProd.close();
+
+            return newID;
 
         } catch (SQLException e) {
-            System.out.println("Could not finalize transaction");
-            return false;
+            e.printStackTrace();
+            System.out.println("Could not insert TransactionProduct: "
+                    + productID + " " + txNumber);
+            return -1;
         }
     }
 
