@@ -16,8 +16,6 @@ public class App {
             return;
         }
 
-        System.out.println("Hello, World!");
-
         String url = creds.nextLine();
         Properties props = new Properties();
         props.setProperty("user", creds.nextLine());
@@ -33,36 +31,22 @@ public class App {
         Execute.executeFile(st, "env/populateData.psql");
         Execute.executeFile(st, "env/preparedQueries.psql");
 
-        // PREPARED STATEMENT VERSION
-        Execute.printRS(getEmployee("Griffin", "%"));
-
-        Insert.insertEmployee("jimmy", "bob", "222-333-4444",
+        int jimmyID = Insert.insertEmployee("jimmy", "bob", "222-333-4444",
                 "jimmybob@bob.com");
-
-        Execute.printQuery(st, "EXECUTE getEmployee(\'" + "j%" + "\');");
-        Execute.printQuery(st, "SELECT * FROM Employee;");
-
         int vanillaID = Insert.insertItem("Vanilla", "desc", true, 1.5);
         int sprinkleID = Insert.insertItem("Sprinkles", "desc2", true, 0.001);
+
         int modID = Insert.insertMenuMod(sprinkleID, 0.7, 0.01, "Sprinkles",
                 "desc2");
-        Execute.printQuery(st, "SELECT * FROM Item;");
         Execute.printQuery(st,
                 "SELECT * FROM MenuModification WHERE ID = " + modID + ";");
 
         int sundaeID = Insert.insertMenuCategory("Sundae");
-        Execute.printQuery(st,
-                "SELECT * FROM MenuCategory WHERE ID = " + sundaeID + ";");
-
         int van1Scoop = Insert.insertMenuProduct(sundaeID, 1.4,
                 "Vanilla Sundae", "desc3");
-        Execute.printQuery(st,
-                "SELECT * FROM MenuProduct WHERE ID = " + van1Scoop + ";");
-
         Insert.insertProductIngredient(van1Scoop, vanillaID, 4.7);
-        Execute.printQuery(st, "SELECT * FROM ProductIngredient;");
 
-        Transaction newTx = new Transaction("X12345");
+        Transaction newTx = new Transaction(jimmyID);
         newTx.addProduct(van1Scoop);
         Execute.printQuery(st, "SELECT * FROM Transaction;");
         Execute.printQuery(st, "SELECT * FROM TransactionProduct;");
@@ -71,20 +55,5 @@ public class App {
         st.close();
 
         Gui.build();
-    }
-
-    public static ResultSet getEmployee(String firstName, String lastName) {
-        try {
-            PreparedStatement getEmpByName = conn.prepareStatement(
-                    "SELECT firstName, lastName FROM Employee WHERE firstName ILIKE ? AND lastName ILIKE ? ORDER BY firstName, lastName");
-            getEmpByName.setString(1, firstName);
-            getEmpByName.setString(2, lastName);
-            return getEmpByName.executeQuery();
-
-        } catch (SQLException e) {
-            System.out.println(
-                    "Failed to getEmployee " + firstName + "  " + lastName);
-            return null;
-        }
     }
 }

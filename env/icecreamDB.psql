@@ -62,7 +62,7 @@ CREATE TABLE Transaction (
 	ID 			serial NOT NULL,
 	employeeWorking 	integer NOT NULL,
 	transactionNumber 	character varying(16) NOT NULL UNIQUE,
-	timeCompleted		timestamp NOT NULL,
+	timeCompleted		timestamp,
 
 	PRIMARY KEY (ID),
 	FOREIGN KEY (employeeWorking) REFERENCES Employee(ID) DEFERRABLE INITIALLY DEFERRED

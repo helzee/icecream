@@ -183,8 +183,7 @@ public class Insert {
             throws SQLException {
         if (!ps.execute()) {
             ps.close();
-            // App.conn.rollback();
-            return -1;
+            throw new SQLException();
         }
 
         ResultSet rs = ps.getResultSet();
@@ -193,7 +192,6 @@ public class Insert {
         rs.close();
         ps.close();
 
-        // App.conn.commit();
         return newID;
     }
 }

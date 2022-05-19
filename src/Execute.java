@@ -56,9 +56,13 @@ public class Execute {
                 System.out.print(" | ");
                 for (int col = 1; col <= cols; col++) {
                     toPrint = rs.getString(col);
-                    colWidth = Math.min(colWidths[col], toPrint.length());
 
-                    System.out.print(toPrint.substring(0, colWidth));
+                    if (toPrint != null) {
+                        colWidth = Math.min(colWidths[col], toPrint.length());
+                        System.out.print(toPrint.substring(0, colWidth));
+                    } else
+                        colWidth = 0;
+
                     System.out.print(
                             " ".repeat(colWidths[col] - colWidth) + " | ");
                 }

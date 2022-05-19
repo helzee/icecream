@@ -32,8 +32,8 @@ public class Transaction {
         txNumber = getTxNumber();
 
         PreparedStatement newTx = App.conn.prepareStatement(
-                "INSERT INTO Transaction (employeeWorking, transactionNumber, timeCompleted)"
-                        + " VALUES (?,?,\'now\'::timestamp) RETURNING ID;");
+                "INSERT INTO Transaction (employeeWorking, transactionNumber)"
+                        + " VALUES (?,?) RETURNING ID;");
         newTx.setInt(1, employeeID);
         newTx.setString(2, txNumber);
         if (!newTx.execute())
@@ -83,6 +83,27 @@ public class Transaction {
             System.out.println("Could not insert TransactionProduct: "
                     + productID + " " + txNumber);
             return -1;
+        }
+    }
+
+    public boolean finishTransaction() {
+        try {
+            Statement st = App.conn.createStatement();
+            int count = st.executeUpdate(
+                    "UPDATE Transaction SET timeCompleted = \'now\'::timestamp WHERE transactionID = "
+                            + txID);
+            if (count != 1)
+                throw new SQLException();
+
+            st.close();
+            // App.conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            // App.conn.rollback();
+            e.printStackTrace();
+            System.out.println("Could not finish transaction: " + txNumber);
+            return false;
         }
     }
 
