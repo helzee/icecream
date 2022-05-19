@@ -53,6 +53,8 @@ public class App {
 
         conn.rollback();
         st.close();
+
+        Gui.build();
     }
 
     public static ResultSet getEmployee(String firstName, String lastName) {
