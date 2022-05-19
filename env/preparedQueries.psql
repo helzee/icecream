@@ -18,3 +18,10 @@ PREPARE txAvail ( text ) AS
     SELECT COUNT(*)
     FROM Transaction
     WHERE transactionNumber = $1;
+
+PREPARE itemPartOfTxProd ( int, int ) AS
+    SELECT COUNT(*)
+    FROM TransactionProduct TP
+        JOIN MenuProduct MP ON ( TP.productID = MP.ID)
+        JOIN ProductIngredient PI ON ( PI.productID = MP.ID)
+    WHERE TP.ID = $1 AND PI.itemID = $2;

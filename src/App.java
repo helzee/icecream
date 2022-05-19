@@ -43,9 +43,9 @@ public class App {
         Insert.insertProductIngredient(van1Scoop, vanillaID, 4.7);
 
         Transaction newTx = new Transaction(jimmyID);
-        newTx.addProduct(van1Scoop);
-        newTx.addProductModification(van1Scoop, modID);
-        Execute.printQuery(st, "SELECT * FROM Modification;");
+        int txProd = newTx.addProduct(van1Scoop);
+        newTx.addProductModification(txProd, modID);
+        newTx.removeProductIngredient(txProd, vanillaID);
 
         conn.rollback();
         st.close();

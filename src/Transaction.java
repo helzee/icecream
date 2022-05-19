@@ -108,6 +108,40 @@ public class Transaction {
         }
     }
 
+    public boolean removeProductIngredient(int txProdID, int itemID) {
+
+        try {
+            Statement st = App.conn.createStatement();
+            ResultSet rs = st.executeQuery("EXECUTE itemPartOfTxProd(\'"
+                    + txProdID + " \',\'" + itemID + "\');");
+            rs.next();
+            int count = rs.getInt(1);
+            rs.close();
+            st.close();
+            if (count != 1)
+                throw new SQLException();
+
+            PreparedStatement newProdMod = App.conn.prepareStatement(
+                    "INSERT INTO RemoveIngredient (transactionProductID, itemID)"
+                            + "VALUES (?,?);");
+            newProdMod.setInt(1, txProdID);
+            newProdMod.setInt(2, itemID);
+
+            if (newProdMod.executeUpdate() != 1)
+                throw new SQLException();
+
+            // App.conn.commit();
+            return true;
+
+        } catch (SQLException e) {
+            // App.conn.rollback();
+            e.printStackTrace();
+            System.out.println("Could not insert Remove Ingredient: "
+                    + txProdID + " " + itemID);
+            return false;
+        }
+    }
+
     public boolean finishTransaction() {
         try {
             Statement st = App.conn.createStatement();
