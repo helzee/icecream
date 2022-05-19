@@ -58,6 +58,11 @@ public class App {
         Execute.printQuery(st,
                 "SELECT * FROM MenuCategory WHERE ID = " + sundaeID + ";");
 
+        int van1Scoop = Insert.insertMenuProduct(sundaeID, 1.4,
+                "Vanilla Sundae", "desc3");
+        Execute.printQuery(st,
+                "SELECT * FROM MenuProduct WHERE ID = " + van1Scoop + ";");
+
         conn.rollback();
         st.close();
 
