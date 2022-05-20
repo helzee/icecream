@@ -16,11 +16,20 @@ public class App {
 
         // Disappears after run time, must run every time
         Execute.executeFile("env/preparedQueries.psql");
+        Execute.executeFile("env/populateData.psql");
+
+        String[][] temp = Format
+                .rsTo2DArray(Execute.runQuery("SELECT * FROM Employee;"));
+        for (String[] a : temp) {
+            for (String b : a) {
+                System.out.print(b + " ");
+            }
+            System.out.println();
+        }
 
         basicTest1();
 
         st.close();
-
         Gui.build();
     }
 
@@ -47,7 +56,6 @@ public class App {
     }
 
     private static void basicTest1() throws SQLException {
-        Execute.executeFile("env/populateData.psql");
 
         int jimmyID = Insert.insertEmployee("jimmy", "bob", "222-333-4444",
                 "jimmybob@bob.com");
