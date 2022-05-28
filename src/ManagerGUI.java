@@ -4,34 +4,27 @@ import javax.swing.*;
 
 public class ManagerGUI implements ItemListener {
    JPanel cards; // a panel that uses CardLayout
-   final static String BUTTONPANEL = "Card with JButtons";
-   final static String TEXTPANEL = "Card with JTextField";
+
    final static String ADD_EMPLOYEE_PANEL = "Add Employee";
+   final static String ADD_ITEM_PANEL = "Add Item";
 
    public void addComponentToPane(Container pane) {
       // Put the JComboBox in a JPanel to get a nicer look.
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
-      String comboBoxItems[] = { BUTTONPANEL, TEXTPANEL, ADD_EMPLOYEE_PANEL };
+      String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
       comboBoxPane.add(cb);
 
-      // Create the "cards".
-      JPanel card1 = new JPanel();
-      card1.add(new JButton("Button 1"));
-      card1.add(new JButton("Button 2"));
-      card1.add(new JButton("Button 3"));
-
-      JPanel card2 = new JPanel();
-      card2.add(new JTextField("TextField", 20));
-
       JPanel addEmployee = createAddEmployeeCard();
+
+      JPanel addItem = createAddItemCard();
       // Create the panel that contains the "cards".
       cards = new JPanel(new CardLayout());
-      cards.add(card1, BUTTONPANEL);
-      cards.add(card2, TEXTPANEL);
+
       cards.add(addEmployee, ADD_EMPLOYEE_PANEL);
+      cards.add(addItem, ADD_ITEM_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
@@ -65,6 +58,29 @@ public class ManagerGUI implements ItemListener {
       });
       addEmployee.add(enterButton);
       return addEmployee;
+   }
+
+   private JPanel createAddItemCard() {
+      JPanel addItem = new JPanel();
+      JTextField[] info = new JTextField[5];
+      addItem.add(info[0] = new JTextField("name", 32));
+      addItem.add(info[1] = new JTextField("description", 32));
+      addItem.add(info[2] = new JTextField("costPerUnit", 12));
+      JButton enterButton = new JButton("Enter");
+      enterButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            Insert.insertItem(info[0].getText(), info[1].getText(), true,
+                  Double.parseDouble(info[2].getText()));
+
+            try {
+               App.conn.commit();
+            } catch (Exception ex) {
+               ex.printStackTrace();
+            }
+         }
+      });
+      addItem.add(enterButton);
+      return addItem;
    }
 
    /**
