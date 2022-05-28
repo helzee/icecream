@@ -55,7 +55,43 @@ public class App {
         st = conn.createStatement();
     }
 
+    private static void populateDB() {
+        populateEmployees();
+        populateItems();
+
+    }
+
+    private static void populateEmployees() {
+        try {
+            Scanner input = new Scanner(new File("env/employees.txt"));
+            while (input.hasNext()) {
+                Insert.insertEmployee(input.next(), input.next(), input.next(),
+                        input.next());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // populate items from txt file
+    private static void populateItems() {
+        try {
+            Scanner input = new Scanner(new File("env/items.txt"));
+
+            input.useDelimiter("\\s*;\\s*");
+
+            while (input.hasNext()) {
+                Insert.insertItem(input.next(), input.next(),
+                        input.nextBoolean(), input.nextDouble());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private static void basicTest1() throws SQLException {
+        populateDB();
 
         int jimmyID = Insert.insertEmployee("jimmy", "bob", "222-333-4444",
                 "jimmybob@bob.com");
