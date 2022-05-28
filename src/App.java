@@ -30,7 +30,7 @@ public class App {
         basicTest1();
 
         st.close();
-        Gui.build();
+        Choice.build();
     }
 
     private static void setUpConn() throws SQLException {

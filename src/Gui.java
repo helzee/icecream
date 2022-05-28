@@ -10,10 +10,14 @@ public class Gui {
     static JPanel panelRight;
     static JPanel ilp;
 
+    private static final String WINDOW_NAME = "Frozen Rock Ice Cream Shop";
+    private static final int WIDTH = 1000;
+    private static final int HEIGHT = 1000;
+
     public static void build() {
-        frame = new JFrame("My First GUI");
+        frame = new JFrame(WINDOW_NAME);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 600);
+        frame.setSize(WIDTH, HEIGHT);
 
         panelMain = new JPanel(new GridLayout(1, 2));
         frame.add(panelMain);
@@ -78,4 +82,5 @@ public class Gui {
         ilp.add(item);
         frame.setVisible(true);
     }
+
 }
