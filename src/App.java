@@ -18,19 +18,19 @@ public class App {
         Execute.executeFile("env/preparedQueries.psql");
         Execute.executeFile("env/populateData.psql");
 
-        String[][] temp = Format
-                .rsTo2DArray(Execute.runQuery("SELECT * FROM Employee;"));
+        String[][] temp = Format.rsTo2DArray(Execute.runQuery("SELECT * FROM Employee;"));
         for (String[] a : temp) {
             for (String b : a) {
                 System.out.print(b + " ");
             }
             System.out.println();
         }
-
+        
         basicTest1();
-
+        //Choice.build();
+        Gui.build();
+        conn.rollback();
         st.close();
-        Choice.build();
     }
 
     private static void setUpConn() throws SQLException {
@@ -66,6 +66,8 @@ public class App {
         int sundaeID = Insert.insertMenuCategory("Sundae");
         int van1Scoop = Insert.insertMenuProduct(sundaeID, 10.4,
                 "Vanilla Sundae", "desc3");
+        int van2Scoop = Insert.insertMenuProduct(sundaeID, 12.4,
+                "Vanilla Sundae 2 scp", "desc3");
         Insert.insertProductIngredient(van1Scoop, vanillaID, 4.7);
 
         Transaction newTx = new Transaction(jimmyID);
@@ -76,6 +78,6 @@ public class App {
         System.out.println(newTx.getReceipt());
         Insert.insertItemLoss(vanillaID, 4.5, "Slipped");
 
-        conn.rollback();
+        //conn.rollback();
     }
 }
