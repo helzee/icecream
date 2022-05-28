@@ -157,6 +157,10 @@ public class Transaction {
         }
     }
 
+    public String getReceipt() {
+        return Receipt.getReceipt(txNumber);
+    }
+
     private static String getTxNumber() {
         String newTxNum = "";
         ResultSet rs;

@@ -64,7 +64,7 @@ public class App {
         int modID = Insert.insertMenuMod(sprinkleID, 0.7, 0.01, "Sprinkles",
                 "desc2");
         int sundaeID = Insert.insertMenuCategory("Sundae");
-        int van1Scoop = Insert.insertMenuProduct(sundaeID, 1.4,
+        int van1Scoop = Insert.insertMenuProduct(sundaeID, 10.4,
                 "Vanilla Sundae", "desc3");
         Insert.insertProductIngredient(van1Scoop, vanillaID, 4.7);
 
@@ -73,6 +73,7 @@ public class App {
         newTx.addProductModification(txProd, modID);
         newTx.removeProductIngredient(txProd, vanillaID);
         newTx.finishTransaction();
+        System.out.println(newTx.getReceipt());
         Insert.insertItemLoss(vanillaID, 4.5, "Slipped");
 
         conn.rollback();

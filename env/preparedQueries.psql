@@ -25,3 +25,54 @@ PREPARE itemPartOfTxProd ( int, int ) AS
         JOIN MenuProduct MP ON ( TP.productID = MP.ID)
         JOIN ProductIngredient PI ON ( PI.productID = MP.ID)
     WHERE TP.ID = $1 AND PI.itemID = $2;
+
+PREPARE getEmpNameForTx ( text ) AS
+    SELECT CONCAT(firstName, ' ', lastName) AS name
+    FROM Employee E
+        JOIN Transaction T ON ( T.employeeWorking = E.ID)
+    WHERE T.transactionNumber = $1;
+
+PREPARE getTxDate ( text ) AS
+    SELECT to_char(timeCompleted::date, 'MM-DD-YYYY')
+    FROM Transaction
+    WHERE transactionNumber = $1;
+
+PREPARE getTxTime ( text ) AS
+    SELECT to_char(timezone('PDT', timeCompleted)::time, 'HH12:MI AM')
+    FROM Transaction
+    WHERE transactionNumber = $1;
+
+PREPARE getTxProds ( text ) AS
+    SELECT TP.ID, P.name, to_char(TP.salesPrice, '$99D99')
+    FROM Transaction T
+        JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
+        JOIN MenuProduct P ON ( TP.productID = P.ID)
+    WHERE T.transactionNumber = $1
+    ORDER BY P.name;
+
+PREPARE getMods ( text ) AS
+    SELECT MM.name,  to_char(M.salesPrice, '+99D99')
+    FROM Modification M
+        JOIN MenuModification MM ON ( M.menuModificationID = MM.ID)
+        JOIN TransactionProduct TP ON ( M.transactionProductID = TP.ID)
+        JOIN Transaction T ON ( TP.transactionID = T.ID)
+    WHERE T.transactionNumber = $1
+    ORDER BY MM.name;
+
+PREPARE getRemoves ( text ) AS
+    SELECT I.name
+    FROM RemoveIngredient R
+        JOIN Item I ON ( R.itemID = I.ID)
+        JOIN TransactionProduct TP ON ( R.transactionProductID = TP.ID)
+        JOIN Transaction T ON ( TP.transactionID = T.ID)
+    WHERE T.transactionNumber = $1
+    ORDER BY I.name;
+
+PREPARE getTxTotal ( text ) AS
+    SELECT to_char(SUM(TP.salesPrice + M.salesPrice), '$999D99') AS subTotal,
+        to_char(SUM(TP.salesPrice + M.salesPrice) / 10, '$999D99') AS tax,
+        to_char(SUM(TP.salesPrice + M.salesPrice) * 1.1, '$999D99') AS total
+    FROM Transaction T
+        JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
+        JOIN Modification M ON ( M.transactionProductID = TP.ID)
+    WHERE T.transactionNumber = $1;

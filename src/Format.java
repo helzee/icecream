@@ -2,6 +2,16 @@ import java.sql.*;
 import java.util.*;
 
 public class Format {
+    public static String rsToString(ResultSet rs) {
+        try {
+            rs.next();
+            return rs.getString(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static String[] rsToArray(ResultSet rs) {
         try {
             LinkedList<String> vals = new LinkedList<String>();
