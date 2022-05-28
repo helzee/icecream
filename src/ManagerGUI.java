@@ -57,7 +57,7 @@ public class ManagerGUI implements ItemListener {
                   info[1].getText(), info[2].getText(), info[3].getText());
 
             try {
-               // App.conn.commit();
+               App.conn.commit();
             } catch (Exception ex) {
                ex.printStackTrace();
             }
