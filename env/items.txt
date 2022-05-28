@@ -1,0 +1,9 @@
+applePie;icecream with apple chunks and cinnamon;true;2.2
+chocoChunk;chocolate ganache pieces in milk chocolate;true;1.3
+bananaSplit;banana pieces with chocolate chips;false;2.4
+mintChip;mint ice cream with chocolate chips;true;1.1
+AppletonAnnhilator;apple flavor ice cream with apple chunks and apple syrup;true; 3.2
+trashcan;chocolate icecream with mint chips, strawberry syrup swirl and peanut butter cups;true; 5.0
+marionberry; marionberry ice cream;true;1.8
+raspberry chip; raspberry ice cream with chocolate chip;true; 1.9
+granola crunch; chocolate icecream with crunchy granola; true;2.1

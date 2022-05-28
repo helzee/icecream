@@ -57,6 +57,7 @@ public class App {
 
     private static void populateDB() {
         populateEmployees();
+        populateItems();
 
     }
 
@@ -71,6 +72,20 @@ public class App {
             e.printStackTrace();
         }
 
+    }
+    // populate items from txt file
+    private static void populateItems() {
+        try {
+            Scanner input = new Scanner(new File ("env/items.txt"));
+
+            input.useDelimiter(";");
+
+            while (input.hasNext()) {
+                Insert.insertItem(input.next(), input.next(), input.nextBoolean(), input.nextInt());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void basicTest1() throws SQLException {
