@@ -73,15 +73,17 @@ public class App {
         }
 
     }
+
     // populate items from txt file
     private static void populateItems() {
         try {
-            Scanner input = new Scanner(new File ("env/items.txt"));
+            Scanner input = new Scanner(new File("env/items.txt"));
 
-            input.useDelimiter(";");
+            input.useDelimiter("\\s*;\\s*");
 
             while (input.hasNext()) {
-                Insert.insertItem(input.next(), input.next(), input.nextBoolean(), input.nextInt());
+                Insert.insertItem(input.next(), input.next(),
+                        input.nextBoolean(), input.nextDouble());
             }
         } catch (Exception e) {
             e.printStackTrace();

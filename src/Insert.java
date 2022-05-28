@@ -176,6 +176,30 @@ public class Insert {
         }
     }
 
+    public static int insertEmployee(String badgeNumber, String firstName,
+            String lastName, String phoneNumber, String email) {
+
+        try {
+            PreparedStatement newEmployee = App.conn.prepareStatement(
+                    "INSERT INTO Employee (badgeNumber, firstName, lastName, phoneNumber, email)"
+                            + "VALUES (?,?,?,?,?) RETURNING ID;");
+            newEmployee.setString(1, badgeNumber);
+            newEmployee.setString(2, firstName);
+            newEmployee.setString(3, lastName);
+            newEmployee.setString(4, phoneNumber);
+            newEmployee.setString(5, email);
+
+            return Execute.execAndFetchID(newEmployee);
+
+        } catch (SQLException e) {
+            System.out.println("Could not insert employee: " + badgeNumber
+                    + " " + firstName + " " + lastName + " " + phoneNumber
+                    + " " + email);
+            return -1;
+        }
+
+    }
+
     private static String getBadgeNumber() {
         String newBadge;
         ResultSet rs;

@@ -6,11 +6,12 @@ public class ManagerGUI implements ItemListener {
    JPanel cards; // a panel that uses CardLayout
    final static String BUTTONPANEL = "Card with JButtons";
    final static String TEXTPANEL = "Card with JTextField";
+   final static String ADD_EMPLOYEE_PANEL = "Add Employee";
 
    public void addComponentToPane(Container pane) {
       // Put the JComboBox in a JPanel to get a nicer look.
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
-      String comboBoxItems[] = { BUTTONPANEL, TEXTPANEL };
+      String comboBoxItems[] = { BUTTONPANEL, TEXTPANEL, ADD_EMPLOYEE_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
@@ -25,10 +26,12 @@ public class ManagerGUI implements ItemListener {
       JPanel card2 = new JPanel();
       card2.add(new JTextField("TextField", 20));
 
+      JPanel addEmployee = createAddEmployeeCard();
       // Create the panel that contains the "cards".
       cards = new JPanel(new CardLayout());
       cards.add(card1, BUTTONPANEL);
       cards.add(card2, TEXTPANEL);
+      cards.add(addEmployee, ADD_EMPLOYEE_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
@@ -37,6 +40,25 @@ public class ManagerGUI implements ItemListener {
    public void itemStateChanged(ItemEvent evt) {
       CardLayout cl = (CardLayout) (cards.getLayout());
       cl.show(cards, (String) evt.getItem());
+   }
+
+   private JPanel createAddEmployeeCard() {
+      JPanel addEmployee = new JPanel();
+      JTextField[] info = new JTextField[5];
+      addEmployee.add(info[4] = new JTextField("BadgeNumber", 6));
+      addEmployee.add(info[0] = new JTextField("FirstName", 32));
+      addEmployee.add(info[1] = new JTextField("LastName", 32));
+      addEmployee.add(info[2] = new JTextField("PhoneNumber", 16));
+      addEmployee.add(info[3] = new JTextField("email", 64));
+      JButton enterButton = new JButton("Enter");
+      enterButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            Insert.insertEmployee(info[4].getText(), info[0].getText(),
+                  info[1].getText(), info[2].getText(), info[3].getText());
+         }
+      });
+      addEmployee.add(enterButton);
+      return addEmployee;
    }
 
    /**
