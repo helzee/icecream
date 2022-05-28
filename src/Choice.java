@@ -7,7 +7,7 @@ public class Choice {
    static JFrame frame;
    static JPanel panelMain;
    private static final String WINDOW_NAME = "Frozen Rock Ice Cream Shop";
-   private static final int WIDTH = 200;
+   private static final int WIDTH = 500;
    private static final int HEIGHT = 100;
 
    public static void build() {
@@ -34,7 +34,7 @@ public class Choice {
       JButton managerButton = new JButton("Manager");
       button1.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
-            Manager.build();
+            ManagerGUI.build();
          }
       });
 

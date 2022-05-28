@@ -18,15 +18,15 @@ public class AnalyticsGUI {
       panelMain = new JPanel(new GridLayout(1, 2));
       frame.add(panelMain);
 
-      JButton managerButton = new JButton("Analytics");
-      managerButton.addActionListener(new ActionListener() {
+      JButton lastMonthSales = new JButton("Analyze last month's sales");
+      lastMonthSales.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             goToManagerPage();
 
          }
       });
 
-      panelMain.add(managerButton);
+      panelMain.add(lastMonthSales);
 
       frame.setVisible(true);
    }

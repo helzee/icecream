@@ -18,26 +18,7 @@ public class ManagerGUI {
       panelMain = new JPanel(new GridLayout(1, 2));
       frame.add(panelMain);
 
-      JButton managerButton = new JButton("Analytics");
-      managerButton.addActionListener(new ActionListener() {
-         public void actionPerformed(ActionEvent e) {
-            goToManagerPage();
-
-         }
-      });
-
-      panelMain.add(managerButton);
-
       frame.setVisible(true);
-   }
-
-   private static void goToManagerPage() {
-
-      panelMain = new JPanel();
-      frame.add(panelMain);
-
-      frame.setVisible(true);
-
    }
 
 }
