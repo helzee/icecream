@@ -5,7 +5,9 @@ import javax.swing.*;
 
 public class Gui {
     static JFrame frame;
+    static JPanel panelWorkspace;
     static JPanel panelMain;
+    static JPanel panelNavToolBar;
     static JScrollPane scrollPanelLeft;
     static JPanel panelRight;
     static JPanel ilp;
@@ -16,11 +18,16 @@ public class Gui {
 
     public static void build() {
         frame = new JFrame(WINDOW_NAME);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
 
-        panelMain = new JPanel(new GridLayout(1, 2));
+        panelWorkspace = new JPanel(new GridLayout(1, 2));
+        panelMain = new JPanel(new BorderLayout());
         frame.add(panelMain);
+        panelMain.add(panelWorkspace, BorderLayout.CENTER);
+        panelNavToolBar = new JPanel(new FlowLayout());
+        panelMain.add(panelNavToolBar, BorderLayout.NORTH);
+
         // JPanel panelLeft = new JPanel();
         // JScrollPane scrollPanelLeft = new JScrollPane(ilp);
         ilp = new JPanel();
@@ -28,14 +35,9 @@ public class Gui {
         ilp.setLayout(new BoxLayout(ilp, BoxLayout.Y_AXIS));
         // ilp.add(Box.createVerticalGlue());
 
-        panelMain.add(scrollPanelLeft);
+        panelWorkspace.add(scrollPanelLeft);
         panelRight = new JPanel(new FlowLayout());
-        panelMain.add(panelRight);
-
-        // JTextArea item1 = new JTextArea("vanilla icecream");
-        // JTextArea item2 = new JTextArea("vanilla icecream");
-        // JTextArea item3 = new JTextArea("vanilla icecream");
-        // JTextArea item4 = new JTextArea("vanilla icecream");
+        panelWorkspace.add(panelRight);
 
         for (int i = 0; i < 0; i++) {
             JTextArea item = new JTextArea("vanilla icecream");
@@ -43,11 +45,6 @@ public class Gui {
             item.setBackground(Color.CYAN);
             ilp.add(item);
         }
-
-        // ilp.add(item1);
-        // ilp.add(item2);
-        // ilp.add(item3);
-        // ilp.add(item4);
 
         JButton button1 = new JButton("vanilla");
         button1.addActionListener(new ActionListener() {
@@ -67,6 +64,15 @@ public class Gui {
                 addItem("strawberry");
             }
         });
+
+        JButton buttonNavToManager = new JButton("Change To Manager GUI");
+        buttonNavToManager.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+                ManagerGUI.build();
+            }
+        });
+        panelNavToolBar.add(buttonNavToManager);
         panelRight.add(button1);
         panelRight.add(button2);
         panelRight.add(button3);
