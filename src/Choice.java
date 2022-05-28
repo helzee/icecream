@@ -21,6 +21,7 @@ public class Choice {
       JButton analyticsButton = new JButton("Analytics");
       analyticsButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
+            frame.dispose();
             AnalyticsGUI.build();
 
          }
@@ -28,13 +29,15 @@ public class Choice {
       JButton button1 = new JButton("Employees");
       button1.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
+            frame.dispose();
             Gui.build();
          }
       });
       JButton managerButton = new JButton("Manager");
-      button1.addActionListener(new ActionListener() {
+      managerButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
-            Manager.build();
+            frame.dispose();
+            ManagerGUI.build();
          }
       });
 
