@@ -55,6 +55,12 @@ public class ManagerGUI implements ItemListener {
          public void actionPerformed(ActionEvent e) {
             Insert.insertEmployee(info[4].getText(), info[0].getText(),
                   info[1].getText(), info[2].getText(), info[3].getText());
+
+            try {
+               // App.conn.commit();
+            } catch (Exception ex) {
+               ex.printStackTrace();
+            }
          }
       });
       addEmployee.add(enterButton);

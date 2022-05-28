@@ -113,5 +113,6 @@ public class App {
         Insert.insertItemLoss(vanillaID, 4.5, "Slipped");
 
         conn.rollback();
+
     }
 }
