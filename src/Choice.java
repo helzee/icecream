@@ -18,8 +18,8 @@ public class Choice {
       panelMain = new JPanel(new GridLayout(1, 2));
       frame.add(panelMain);
 
-      JButton managerButton = new JButton("Analytics");
-      managerButton.addActionListener(new ActionListener() {
+      JButton analyticsButton = new JButton("Analytics");
+      analyticsButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             AnalyticsGUI.build();
 
@@ -31,9 +31,16 @@ public class Choice {
             Gui.build();
          }
       });
+      JButton managerButton = new JButton("Manager");
+      button1.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            Manager.build();
+         }
+      });
 
       panelMain.add(button1);
       panelMain.add(managerButton);
+      panelMain.add(analyticsButton);
 
       frame.setVisible(true);
    }
