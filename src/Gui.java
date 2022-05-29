@@ -19,7 +19,7 @@ public class Gui {
 
     public static void build() {
         frame = new JFrame(WINDOW_NAME);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
 
         panelWorkspace = new JPanel(new GridLayout(1, 2));
@@ -39,34 +39,21 @@ public class Gui {
         panelWorkspace.add(scrollPanelLeft);
         panelRight = new JPanel(new FlowLayout());
         panelWorkspace.add(panelRight);
-        
-        /* used for manually making buttons
-        for (int i = 0; i < 0; i++) {
-            JTextArea item = new JTextArea("vanilla icecream");
-            item.setMaximumSize(item.getPreferredSize());
-            item.setBackground(Color.CYAN);
-            ilp.add(item);
-        }
 
-        JButton button1 = new JButton("vanilla");
-        button1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("vanilla");
-            }
-        });
-        JButton button2 = new JButton("chocolate");
-        button2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("chocolate");
-            }
-        });
-        JButton button3 = new JButton("strawberry");
-        button3.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("strawberry");
-            }
-        });
-        */
+        /*
+         * used for manually making buttons for (int i = 0; i < 0; i++) { JTextArea item
+         * = new JTextArea("vanilla icecream");
+         * item.setMaximumSize(item.getPreferredSize()); item.setBackground(Color.CYAN);
+         * ilp.add(item); }
+         * 
+         * JButton button1 = new JButton("vanilla"); button1.addActionListener(new
+         * ActionListener() { public void actionPerformed(ActionEvent e) {
+         * addItem("vanilla"); } }); JButton button2 = new JButton("chocolate");
+         * button2.addActionListener(new ActionListener() { public void
+         * actionPerformed(ActionEvent e) { addItem("chocolate"); } }); JButton button3
+         * = new JButton("strawberry"); button3.addActionListener(new ActionListener() {
+         * public void actionPerformed(ActionEvent e) { addItem("strawberry"); } });
+         */
 
         JButton buttonNavToManager = new JButton("Change To Manager GUI");
         buttonNavToManager.addActionListener(new ActionListener() {
@@ -91,10 +78,13 @@ public class Gui {
         frame.setVisible(true);
     }
 
-    private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to the building reciept
-        String[] ids = Format.rsToArray(Execute.runQuery("SELECT id FROM MenuProduct WHERE isOffered is TRUE;"));
+    private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to
+                                           // the building reciept
+        String[] ids = Format.rsToArray(Execute.runQuery(
+                "SELECT id FROM MenuProduct WHERE isOffered is TRUE;"));
         for (String id : ids) {
-            String name = Format.rsToString(Execute.runQuery("SELECT name FROM MenuProduct WHERE id = " + id +";"));
+            String name = Format.rsToString(Execute.runQuery(
+                    "SELECT name FROM MenuProduct WHERE id = " + id + ";"));
             JButton button = new JButton(name);
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {

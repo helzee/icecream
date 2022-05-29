@@ -1,23 +1,34 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.sql.*;
+import java.util.*;
 
 public class ManagerGUI implements ItemListener {
    JPanel cards; // a panel that uses CardLayout
+   static JFrame frame;
 
    final static String ADD_EMPLOYEE_PANEL = "Add Employee";
    final static String ADD_ITEM_PANEL = "Add Item";
+   final static String EDIT_EMPLOYEE_PANEL = "Edit/delete Employees";
 
    public void addComponentToPane(Container pane) {
       // Put the JComboBox in a JPanel to get a nicer look.
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
-      String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL };
+      String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL,
+            EDIT_EMPLOYEE_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
       comboBoxPane.add(cb);
 
       JPanel addEmployee = createAddEmployeeCard();
+      JPanel editEmployee = null;
+      try {
+         editEmployee = createEditEmployeeCard();
+      } catch (SQLException e) {
+         e.printStackTrace();
+      }
 
       JPanel addItem = createAddItemCard();
       // Create the panel that contains the "cards".
@@ -25,17 +36,125 @@ public class ManagerGUI implements ItemListener {
 
       cards.add(addEmployee, ADD_EMPLOYEE_PANEL);
       cards.add(addItem, ADD_ITEM_PANEL);
+      cards.add(editEmployee, EDIT_EMPLOYEE_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
+
    }
+
+   // private static void addNavBar(JPanel panelMain, JFrame frame) {
+   // JPanel panelNavToolBar = new JPanel(new FlowLayout());
+   // panelMain.add(panelNavToolBar, BorderLayout.NORTH);
+   // JButton buttonNavToManager = new JButton("Change To Employee GUI");
+   // buttonNavToManager.addActionListener(new ActionListener() {
+   // public void actionPerformed(ActionEvent e) {
+   // frame.dispose();
+   // Gui.build();
+   // }
+   // });
+
+   // panelNavToolBar.add(buttonNavToManager);
+   // }
 
    public void itemStateChanged(ItemEvent evt) {
       CardLayout cl = (CardLayout) (cards.getLayout());
       cl.show(cards, (String) evt.getItem());
    }
 
-   private JPanel createAddEmployeeCard() {
+   private static JPanel createEditEmployeeCard() throws SQLException {
+      JPanel editEmployee = new JPanel();
+
+      ResultSet employees = Execute
+            .runQuery("SELECT id, firstName, LastName FROM Employee;");
+
+      Vector<JButton> empButtons = new Vector<JButton>();
+      Vector<Integer> empIDs = new Vector<Integer>();
+      JButton button = null;
+      while (employees.next()) {
+         empIDs.add(employees.getInt(1));
+         empButtons.add(button = new JButton(
+               employees.getString(2) + " " + employees.getString(3)));
+         button.putClientProperty("id", employees.getInt(1));
+      }
+
+      for (JButton b : empButtons) {
+         editEmployee.add(b);
+      }
+
+      for (int i = 0; i < empButtons.size(); i++) {
+         empButtons.get(i).addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+               try {
+                  generateEditEmployeeWindow((int) ((JButton) e.getSource())
+                        .getClientProperty("id"));
+                  frame.dispose();
+               } catch (SQLException et) {
+                  et.printStackTrace();
+               }
+
+            }
+         });
+      }
+
+      return editEmployee;
+
+   }
+
+   private static void generateEditEmployeeWindow(int empID)
+         throws SQLException {
+      ResultSet employee = App.conn.createStatement()
+            .executeQuery("SELECT * FROM Employee WHERE id =" + empID + ";");
+      employee.next();
+
+      JFrame frame = new JFrame("Edit Employee");
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+      JPanel editEmployee = new JPanel();
+      JTextField[] info = new JTextField[5];
+
+      editEmployee.add(info[0] = new JTextField(employee.getString(2), 6));
+      editEmployee.add(info[1] = new JTextField(employee.getString(3), 32));
+      editEmployee.add(info[2] = new JTextField(employee.getString(4), 32));
+      editEmployee.add(info[3] = new JTextField(employee.getString(5), 16));
+      editEmployee.add(info[4] = new JTextField(employee.getString(6), 64));
+
+      JButton enterButton = new JButton("Enter");
+      enterButton.putClientProperty("id", empID);
+
+      enterButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            try {
+               int empID = (int) ((JButton) e.getSource())
+                     .getClientProperty("id");
+               String[] colNames = { "badgeNumber", "firstName", "lastName",
+                     "phoneNumber", "email" };
+
+               for (int i = 0; i < colNames.length; i++) {
+                  App.conn.createStatement()
+                        .executeUpdate("UPDATE Employee SET " + colNames[i]
+                              + " = \'" + info[i].getText() + "\' "
+                              + "WHERE id = " + empID + ";");
+               }
+               App.conn.commit();
+            } catch (SQLException et) {
+               et.printStackTrace();
+            }
+
+            frame.dispose();
+            ManagerGUI.createAndShowGUI();
+
+         }
+      });
+
+      editEmployee.add(enterButton);
+
+      frame.add(editEmployee);
+      frame.pack();
+      frame.setVisible(true);
+   }
+
+   private static JPanel createAddEmployeeCard() {
       JPanel addEmployee = new JPanel();
       JTextField[] info = new JTextField[5];
       addEmployee.add(info[4] = new JTextField("BadgeNumber", 6));
@@ -89,8 +208,11 @@ public class ManagerGUI implements ItemListener {
     */
    private static void createAndShowGUI() {
       // Create and set up the window.
-      JFrame frame = new JFrame("Frozen Rock Ice Cream Shop - Manager");
+      frame = new JFrame("Frozen Rock Ice Cream Shop - Manager");
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      // JPanel panelMain = new JPanel();
+      // frame.add(panelMain);
+      // addNavBar(panelMain, frame);
 
       // Create and set up the content pane.
       ManagerGUI demo = new ManagerGUI();

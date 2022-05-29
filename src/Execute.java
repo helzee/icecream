@@ -32,11 +32,13 @@ public class Execute {
 
     public static ResultSet runQuery(String query) {
         try {
-            return App.st.executeQuery(query);
+            Statement st = App.conn.createStatement();
+            return st.executeQuery(query);
 
         } catch (SQLException e) {
             System.out.println("Failed to execute :\n" + query);
-            System.exit(1);
+            e.printStackTrace();
+            // System.exit(1);
         }
 
         return null;

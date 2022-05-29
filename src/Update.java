@@ -8,7 +8,7 @@ public class Update {
             PreparedStatement updateRows = App.conn
                     .prepareStatement("UPDATE ? SET ? = ? WHERE ?");
             updateRows.setString(1, table);
-            updateRows.setString(2, colName);
+            updateRows.setString(2, "\'" + colName + "\'");
             updateRows.setString(3, newVal);
             updateRows.setString(4, condition);
 
