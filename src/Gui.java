@@ -70,25 +70,92 @@ public class Gui {
         frame.setVisible(true);
     }
 
-    private static void addItem(String s) {
-        JTextArea item = new JTextArea(s);
-        item.setMaximumSize(item.getPreferredSize());
-        item.setBackground(Color.CYAN);
-        ilp.add(item);
+    private static void addItem(String id, String name, String price) {
+        // itembox panel to hold All item information
+        JPanel itemBox = new JPanel(new BorderLayout(10, 5));
+        itemBox.setMaximumSize(new Dimension(10000, 25));
+
+        JPanel itemBoxLeft = new JPanel(new BorderLayout(2, 0));
+        itemBoxLeft.setMaximumSize(new Dimension(80, 25));
+        itemBox.add(itemBoxLeft, BorderLayout.WEST);
+
+        // button to delete the item
+        JButton DeleteButton = new JButton("X");
+        DeleteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
+                ilp.revalidate();
+                ilp.repaint();
+            }
+        });
+        // DeleteButton.setMaximumSize(new Dimension(25,25));
+        DeleteButton.setSize(25, 25);
+        itemBoxLeft.add(DeleteButton, BorderLayout.WEST);
+
+        // text displaying id
+        JLabel idText = new JLabel("ID: " + id);
+        itemBoxLeft.add(idText, BorderLayout.EAST);
+
+        // text displaying name
+        JLabel nameText = new JLabel(name);
+        nameText.setMaximumSize(nameText.getPreferredSize());
+        nameText.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        itemBox.add(nameText, BorderLayout.CENTER);
+
+        // text displaying price
+        JLabel priceText = new JLabel(price);
+        priceText.setMaximumSize(priceText.getPreferredSize());
+        priceText.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        itemBox.add(priceText, BorderLayout.EAST);
+
+        // item.setMaximumSize(item.getPreferredSize());
+        // item.setBackground(Color.CYAN);
+        ilp.add(itemBox);
         frame.setVisible(true);
     }
 
     private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to
                                            // the building reciept
+        JPanel itemBox = new JPanel(new BorderLayout(10, 5));
+        itemBox.setMaximumSize(new Dimension(10000, 25));
+
+        JPanel itemBoxLeft = new JPanel(new BorderLayout(2, 0));
+        itemBoxLeft.setMaximumSize(new Dimension(80, 25));
+        itemBox.add(itemBoxLeft, BorderLayout.WEST);
+
+        JLabel idText = new JLabel("ID", SwingConstants.CENTER);
+        idText.setMaximumSize(idText.getPreferredSize());
+        idText.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
+        itemBoxLeft.add(idText, BorderLayout.EAST);
+
+        // text displaying name
+        JLabel nameText = new JLabel("NAME", SwingConstants.CENTER);
+        nameText.setMaximumSize(nameText.getPreferredSize());
+        itemBox.add(nameText, BorderLayout.CENTER);
+
+        // text displaying price
+        JLabel priceText = new JLabel("PRICE", SwingConstants.CENTER);
+        priceText.setMaximumSize(priceText.getPreferredSize());
+        priceText.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        itemBox.add(priceText, BorderLayout.EAST);
+
+        ilp.add(itemBox);
+
         String[] ids = Format.rsToArray(Execute.runQuery(
                 "SELECT id FROM MenuProduct WHERE isOffered is TRUE;"));
+
         for (String id : ids) {
+
             String name = Format.rsToString(Execute.runQuery(
                     "SELECT name FROM MenuProduct WHERE id = " + id + ";"));
+            String price = Format.rsToString(Execute.runQuery(
+                    "SELECT currentPrice FROM MenuProduct WHERE id = " + id
+                            + ";"));
+
             JButton button = new JButton(name);
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    addItem(name);
+                    addItem(id, name, price);
                 }
             });
             panelRight.add(button);
