@@ -327,8 +327,13 @@ public class ManagerGUI implements ItemListener {
                      Update.updateBoolean(entity, colNames[i],
                            info[i].getText(), id);
                   } else if (types[i].toLowerCase().equals("numeric")) {
-                     Update.updateNumeric(entity, colNames[i],
-                           new BigDecimal(info[i].getText()), id);
+                     BigDecimal num = null;
+                     try {
+                        num = new BigDecimal(info[i].getText());
+                     } catch (Exception et) {
+                        num = new BigDecimal(0);
+                     }
+                     Update.updateNumeric(entity, colNames[i], num, id);
                   }
 
                }
