@@ -52,22 +52,20 @@ PREPARE getTxProds ( text ) AS
     WHERE T.transactionNumber = $1
     ORDER BY P.name;
 
-PREPARE getMods ( text ) AS
+PREPARE getMods ( int ) AS
     SELECT MM.name,  to_char(M.salesPrice, '+99D99')
     FROM Modification M
         JOIN MenuModification MM ON ( M.menuModificationID = MM.ID)
         JOIN TransactionProduct TP ON ( M.transactionProductID = TP.ID)
-        JOIN Transaction T ON ( TP.transactionID = T.ID)
-    WHERE T.transactionNumber = $1
+    WHERE TP.ID = $1
     ORDER BY MM.name;
 
-PREPARE getRemoves ( text ) AS
+PREPARE getRemoves ( int ) AS
     SELECT I.name
     FROM RemoveIngredient R
         JOIN Item I ON ( R.itemID = I.ID)
         JOIN TransactionProduct TP ON ( R.transactionProductID = TP.ID)
-        JOIN Transaction T ON ( TP.transactionID = T.ID)
-    WHERE T.transactionNumber = $1
+    WHERE TP.ID = $1
     ORDER BY I.name;
 
 PREPARE getTxTotal ( text ) AS
