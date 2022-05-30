@@ -9,8 +9,6 @@ PREPARE getEmployeeID ( text ) AS
     FROM Employee
     WHERE badgeNumber = $1;
 
-
-
 PREPARE badgeAvail ( text ) AS
     SELECT COUNT(*)
     FROM Employee
