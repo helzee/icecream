@@ -350,6 +350,9 @@ public class ProductGUI {
 
             try {
                App.conn.createStatement().executeUpdate(
+                     "DELETE FROM productIngredient WHERE productid = " + id
+                           + ";");
+               App.conn.createStatement().executeUpdate(
                      "DELETE FROM " + entity + " WHERE id = " + id + ";");
                App.conn.commit();
             } catch (SQLException et) {
