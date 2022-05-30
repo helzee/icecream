@@ -16,20 +16,21 @@ public class App {
 
         // Disappears after run time, must run every time
         Execute.executeFile("env/preparedQueries.psql");
-        Execute.executeFile("env/populateData.psql");
+        // Execute.executeFile("env/populateData.psql");
 
-        String[][] temp = Format.rsTo2DArray(Execute.runQuery("SELECT * FROM Employee;"));
+        String[][] temp = Format
+                .rsTo2DArray(Execute.runQuery("SELECT * FROM Employee;"));
         for (String[] a : temp) {
             for (String b : a) {
                 System.out.print(b + " ");
             }
             System.out.println();
         }
-        
+
         basicTest1();
-        //Choice.build();
+        // Choice.build();
         Gui.build();
-        conn.rollback();
+
         st.close();
     }
 
@@ -114,6 +115,7 @@ public class App {
         System.out.println(newTx.getReceipt());
         Insert.insertItemLoss(vanillaID, 4.5, "Slipped");
 
-        //conn.rollback();
+        // conn.rollback();
+
     }
 }

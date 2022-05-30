@@ -3,6 +3,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.sql.*;
 import java.util.*;
+import java.math.BigDecimal;
 
 public class ManagerGUI implements ItemListener {
    JPanel cards; // a panel that uses CardLayout
@@ -11,12 +12,18 @@ public class ManagerGUI implements ItemListener {
    final static String ADD_EMPLOYEE_PANEL = "Add Employee";
    final static String ADD_ITEM_PANEL = "Add Item";
    final static String EDIT_EMPLOYEE_PANEL = "Edit/delete Employees";
+   final static String EDIT_ITEM_PANEL = "Edit/delete Items";
+
+   final static String[] ITEM_COLUMNS = { "name", "description",
+         "unitisounces", "avgcostperunit" };
+   final static String[] ITEM_COL_TYPES = { "string", "string", "boolean",
+         "numeric" };
 
    public void addComponentToPane(Container pane) {
       // Put the JComboBox in a JPanel to get a nicer look.
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
       String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL,
-            EDIT_EMPLOYEE_PANEL };
+            EDIT_EMPLOYEE_PANEL, EDIT_ITEM_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
@@ -24,19 +31,23 @@ public class ManagerGUI implements ItemListener {
 
       JPanel addEmployee = createAddEmployeeCard();
       JPanel editEmployee = null;
+      JPanel editItem = null;
       try {
          editEmployee = createEditEmployeeCard();
+         editItem = createEditItemCard(ITEM_COLUMNS, ITEM_COL_TYPES, "Item");
       } catch (SQLException e) {
          e.printStackTrace();
       }
 
       JPanel addItem = createAddItemCard();
+
       // Create the panel that contains the "cards".
       cards = new JPanel(new CardLayout());
 
       cards.add(addEmployee, ADD_EMPLOYEE_PANEL);
       cards.add(addItem, ADD_ITEM_PANEL);
       cards.add(editEmployee, EDIT_EMPLOYEE_PANEL);
+      cards.add(editItem, EDIT_ITEM_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
@@ -137,6 +148,7 @@ public class ManagerGUI implements ItemListener {
                               + "WHERE id = " + empID + ";");
                }
                App.conn.commit();
+
             } catch (SQLException et) {
                et.printStackTrace();
             }
@@ -173,6 +185,8 @@ public class ManagerGUI implements ItemListener {
             } catch (Exception ex) {
                ex.printStackTrace();
             }
+            frame.dispose();
+            createAndShowGUI();
          }
       });
       addEmployee.add(enterButton);
@@ -196,10 +210,122 @@ public class ManagerGUI implements ItemListener {
             } catch (Exception ex) {
                ex.printStackTrace();
             }
+            frame.dispose();
+            createAndShowGUI();
          }
       });
       addItem.add(enterButton);
       return addItem;
+   }
+
+   private static JPanel createEditItemCard(String[] cols, String[] types,
+         String entity) throws SQLException {
+      JPanel editItem = new JPanel();
+
+      String query = "SELECT id";
+      for (String s : cols) {
+         query += ", " + s;
+      }
+      query += " FROM " + entity + ";";
+      ResultSet items = Execute.runQuery(query);
+
+      Vector<JButton> itemButtons = new Vector<JButton>();
+      Vector<Integer> itemIDs = new Vector<Integer>();
+      JButton button = null;
+      while (items.next()) {
+         itemIDs.add(items.getInt(1));
+         itemButtons.add(button = new JButton(items.getString(2)));
+         button.putClientProperty("id", items.getInt(1));
+
+      }
+
+      for (JButton b : itemButtons) {
+         editItem.add(b);
+      }
+
+      for (int i = 0; i < itemButtons.size(); i++) {
+         itemButtons.get(i).addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+               try {
+                  generateEditItemWindow((int) ((JButton) e.getSource())
+                        .getClientProperty("id"), entity, cols, types);
+                  frame.dispose();
+               } catch (SQLException et) {
+                  et.printStackTrace();
+               }
+
+            }
+         });
+      }
+
+      return editItem;
+
+   }
+
+   private static void generateEditItemWindow(int itemID, String entity,
+         String[] colNames, String[] types) throws SQLException {
+
+      ResultSet item = App.conn.createStatement().executeQuery(
+            "SELECT * FROM " + entity + " WHERE id =" + itemID + ";");
+      item.next();
+
+      JFrame frame = new JFrame("Edit Item");
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+      JPanel editItem = new JPanel();
+      JTextField[] info = new JTextField[colNames.length];
+
+      for (int i = 0; i < colNames.length; i++) {
+         int size = 32;
+         if (types[i].toLowerCase().equals("string")) {
+            size = 40;
+         } else if (types[i].toLowerCase().equals("boolean")) {
+            size = 5;
+         } else if (types[i].toLowerCase().equals("numeric")) {
+            size = 12;
+         }
+         editItem.add(info[i] = new JTextField(item.getString(i + 2), size));
+      }
+
+      JButton enterButton = new JButton("Enter");
+      enterButton.putClientProperty("id", itemID);
+
+      enterButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            try {
+               int id = (int) ((JButton) e.getSource())
+                     .getClientProperty("id");
+
+               for (int i = 0; i < colNames.length; i++) {
+                  if (types[i].toLowerCase().equals("string")) {
+                     Update.updateString(entity, colNames[i],
+                           info[i].getText(), id);
+                  } else if (types[i].toLowerCase().equals("boolean")) {
+                     Update.updateBoolean(entity, colNames[i],
+                           info[i].getText(), id);
+                  } else if (types[i].toLowerCase().equals("numeric")) {
+                     Update.updateNumeric(entity, colNames[i],
+                           new BigDecimal(info[i].getText()), id);
+                  }
+
+               }
+               App.conn.commit();
+
+            } catch (SQLException et) {
+               et.printStackTrace();
+            }
+
+            frame.dispose();
+            ManagerGUI.createAndShowGUI();
+
+         }
+      });
+
+      editItem.add(enterButton);
+
+      frame.add(editItem);
+      frame.pack();
+      frame.setVisible(true);
    }
 
    /**

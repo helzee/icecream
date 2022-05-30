@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.sql.*;
 
 public class Update {
@@ -22,5 +23,29 @@ public class Update {
                     + " based on condition: " + condition);
             return 0;
         }
+    }
+
+    public static void updateString(String entity, String column,
+            String update, int id) throws SQLException {
+        App.conn.createStatement()
+                .executeUpdate("UPDATE " + entity + " SET " + column + " = \'"
+                        + update + "\' " + "WHERE id = " + id + ";");
+    }
+
+    public static void updateBoolean(String entity, String column,
+            String update, int id) throws SQLException {
+        if (!update.toLowerCase().equals("true")
+                && !update.toLowerCase().equals("false")) {
+            update = "false";
+        }
+        App.conn.createStatement().executeUpdate("UPDATE " + entity + " SET "
+                + column + " = " + update + " " + "WHERE id = " + id + ";");
+    }
+
+    public static void updateNumeric(String entity, String column,
+            BigDecimal update, int id) throws SQLException {
+        App.conn.createStatement()
+                .executeUpdate("UPDATE " + entity + " SET " + column + " = "
+                        + update.toString() + " " + "WHERE id = " + id + ";");
     }
 }
