@@ -94,11 +94,12 @@ CREATE TABLE MenuModification (
 );
 
 CREATE TABLE Modification (
+	ID				serial NOT NULL,
 	transactionProductID 	integer NOT NULL,
 	menuModificationID 	integer NOT NULL,
 	salesPrice 		numeric(10,2) NOT NULL,
 
-	PRIMARY KEY (transactionProductID, menuModificationID),
+	PRIMARY KEY (ID),
 	FOREIGN KEY (transactionProductID) REFERENCES TransactionProduct(ID) DEFERRABLE INITIALLY DEFERRED,
 	FOREIGN KEY (menuModificationID) REFERENCES MenuModification(ID) DEFERRABLE INITIALLY DEFERRED
 );
