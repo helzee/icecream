@@ -34,8 +34,9 @@ public class Update {
 
     public static void updateBoolean(String entity, String column,
             String update, int id) throws SQLException {
-        if (!update.toLowerCase().equals("true")
-                && !update.toLowerCase().equals("false")) {
+        if (update.toLowerCase().contains("t")) {
+            update = "true";
+        } else {
             update = "false";
         }
         App.conn.createStatement().executeUpdate("UPDATE " + entity + " SET "
