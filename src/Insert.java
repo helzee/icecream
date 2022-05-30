@@ -11,34 +11,6 @@ public class Insert {
             '6', '7', '8', '9', '0' };
     public static final int badgeNumberSize = 6;
 
-    public static boolean insertItemLoss(int itemID, double unitsLost,
-            String reason) {
-
-        try {
-            PreparedStatement newMenuProd = App.conn.prepareStatement(
-                    "INSERT INTO ItemLoss (itemID, timeOfOccurance, unitsLost, reason)"
-                            + "VALUES (?,\'now\'::timestamp,?,?);");
-            newMenuProd.setInt(1, itemID);
-            newMenuProd.setBigDecimal(2, new BigDecimal(unitsLost));
-            newMenuProd.setString(3, reason);
-
-            int toReturn = newMenuProd.executeUpdate();
-            newMenuProd.close();
-
-            if (toReturn != 1) {
-                // App.conn.rollback();
-                return false;
-            }
-            // App.conn.commit();
-            return true;
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Could not insert Item Loss: " + itemID);
-            return false;
-        }
-    }
-
     public static boolean insertProductIngredient(int productID, int itemID,
             double unitsNeeded) {
 

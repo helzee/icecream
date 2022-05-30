@@ -52,29 +52,27 @@ PREPARE getTxProds ( text ) AS
     WHERE T.transactionNumber = $1
     ORDER BY P.name;
 
-PREPARE getMods ( text ) AS
+PREPARE getMods ( int ) AS
     SELECT MM.name,  to_char(M.salesPrice, '+99D99')
     FROM Modification M
         JOIN MenuModification MM ON ( M.menuModificationID = MM.ID)
         JOIN TransactionProduct TP ON ( M.transactionProductID = TP.ID)
-        JOIN Transaction T ON ( TP.transactionID = T.ID)
-    WHERE T.transactionNumber = $1
+    WHERE TP.ID = $1
     ORDER BY MM.name;
 
-PREPARE getRemoves ( text ) AS
+PREPARE getRemoves ( int ) AS
     SELECT I.name
     FROM RemoveIngredient R
         JOIN Item I ON ( R.itemID = I.ID)
         JOIN TransactionProduct TP ON ( R.transactionProductID = TP.ID)
-        JOIN Transaction T ON ( TP.transactionID = T.ID)
-    WHERE T.transactionNumber = $1
+    WHERE TP.ID = $1
     ORDER BY I.name;
 
 PREPARE getTxTotal ( text ) AS
-    SELECT to_char(SUM(TP.salesPrice + M.salesPrice), '$999D99') AS subTotal,
-        to_char(SUM(TP.salesPrice + M.salesPrice) / 10, '$999D99') AS tax,
-        to_char(SUM(TP.salesPrice + M.salesPrice) * 1.1, '$999D99') AS total
+    SELECT to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)), '$999D99') AS subTotal,
+        to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)) / 10, '$999D99') AS tax,
+        to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)) * 1.1, '$999D99') AS total
     FROM Transaction T
         JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
-        JOIN Modification M ON ( M.transactionProductID = TP.ID)
+        LEFT JOIN Modification M ON ( M.transactionProductID = TP.ID)
     WHERE T.transactionNumber = $1;

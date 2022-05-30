@@ -48,7 +48,7 @@ public class Receipt {
 
                 // Find and print all of its Modifications
                 rs = Execute.runQuery("EXECUTE getMods(\'"
-                        + txNumber + "\');");
+                        + tp.txProdID + "\');");
                 while (rs.next()) {
                     nameTemp = rs.getString(1);
                     nameWidth = Math.min(nameTemp.length(),
@@ -64,7 +64,7 @@ public class Receipt {
 
                 // Find and print all of its RemoveIngredients
                 rs = Execute.runQuery("EXECUTE getRemoves(\'"
-                        + txNumber + "\');");
+                        + tp.txProdID + "\');");
                 while (rs.next()) {
                     nameTemp = rs.getString(1);
                     nameWidth = Math.min(nameTemp.length(),
@@ -97,12 +97,12 @@ public class Receipt {
 }
 
 class txProd {
-    public int item;
+    public int txProdID;
     public String name;
     public String price;
 
     public txProd(int item, String name, String price) {
-        this.item = item;
+        this.txProdID = item;
         this.name = name;
         this.price = price;
     }
