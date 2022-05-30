@@ -376,7 +376,8 @@ public class ManagerGUI implements ItemListener {
                      "DELETE FROM " + entity + " WHERE id = " + id + ";");
                App.conn.commit();
             } catch (SQLException et) {
-               et.printStackTrace();
+               System.err.println(
+                     "Can't delete item. It is probably used in a product");
             }
             frame.dispose();
             ManagerGUI.createAndShowGUI();
