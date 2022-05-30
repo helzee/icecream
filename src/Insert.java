@@ -79,17 +79,16 @@ public class Insert {
     }
 
     public static int insertMenuMod(int itemID, double unitsNeeded,
-            double currentPrice, String name, String desc) {
+            double currentPrice, String name) {
 
         try {
             PreparedStatement newMenuMod = App.conn.prepareStatement(
-                    "INSERT INTO MenuModification (itemID, unitsNeeded, currentPrice, name, description, isOffered)"
-                            + "VALUES (?,?,?,?,?,true) RETURNING ID");
+                    "INSERT INTO MenuModification (itemID, unitsNeeded, currentPrice, name, isOffered)"
+                            + "VALUES (?,?,?,?,true) RETURNING ID");
             newMenuMod.setInt(1, itemID);
             newMenuMod.setBigDecimal(2, new BigDecimal(unitsNeeded));
             newMenuMod.setBigDecimal(3, new BigDecimal(currentPrice));
             newMenuMod.setString(4, name);
-            newMenuMod.setString(5, desc);
 
             return Execute.execAndFetchID(newMenuMod);
 

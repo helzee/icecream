@@ -1,7 +1,7 @@
 CREATE TABLE Item (
 	ID 		serial NOT NULL,
 	name 		character varying(32) NOT NULL,
-	description 	character varying(256) NOT NULL,
+	description 	character varying(256),
 	unitIsOunces 	boolean NOT NULL,
 	avgCostPerUnit 	numeric(10,3) NOT NULL,
 
@@ -20,7 +20,7 @@ CREATE TABLE MenuProduct (
 	categoryID 	integer NOT NULL,
 	currentPrice 	numeric(10,2) NOT NULL,
 	name 		character varying(32) NOT NULL,
-	description 	character varying(256) NOT NULL,
+	description 	character varying(256),
 	isOffered 	boolean NOT NULL,
 
 	PRIMARY KEY (ID),
@@ -76,7 +76,6 @@ CREATE TABLE MenuModification (
 	unitsNeeded	numeric(10,2) NOT NULL,
 	currentPrice 	numeric(10,2) NOT NULL,
 	name 		character varying(32) NOT NULL,
-	description	character varying(256) NOT NULL,
 	isOffered 	boolean NOT NULL,
 
 	PRIMARY KEY (ID),
