@@ -118,6 +118,7 @@ public class Gui {
         JButton DeleteButton = new JButton("X");
         DeleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                if (selectedItem == itemBox) selectItem(null);
                 ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
                 ilp.revalidate(); // refresh
                 ilp.repaint();
@@ -142,10 +143,10 @@ public class Gui {
         priceText.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
         itemBox.add(priceText,BorderLayout.EAST);
 
-        ilp.remove(itemPlaceHolder);
+        //ilp.remove(itemPlaceHolder);
         ilp.add(itemBox);
         addPlaceHolder();
-        selectItem(itemPlaceHolder);
+        selectItem(itemBox);
 
         frame.setVisible(true);
 
@@ -154,11 +155,15 @@ public class Gui {
     private static void selectItem(JPanel p){
         if (selectedItem != null)
             selectedItem.setBackground(normal);
-        selectedItem = p;
-        selectedItem.setBackground(Color.LIGHT_GRAY);
+        if (p != null){
+            selectedItem = p;
+            selectedItem.setBackground(Color.LIGHT_GRAY);
+        }
     }
 
     private static void addPlaceHolder(){
+        return;
+        /*
         itemPlaceHolder = new JPanel(new BorderLayout(10,5));
         itemPlaceHolder.setMaximumSize(new Dimension(10000,25));
         itemPlaceHolder.setSize(new Dimension(10000,25));
@@ -169,6 +174,7 @@ public class Gui {
         });
         selectItem(itemPlaceHolder);
         ilp.add(itemPlaceHolder);
+        */
     }
 
     private static void addModifier(String id, String name, String price) {
