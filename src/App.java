@@ -102,7 +102,6 @@ public class App {
         newTx.removeProductIngredient(txProd, vanillaID);
         newTx.finishTransaction();
         System.out.println(newTx.getReceipt());
-        Insert.insertItemLoss(vanillaID, 4.5, "Slipped");
 
         // conn.rollback();
 
