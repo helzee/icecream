@@ -49,4 +49,11 @@ public class Update {
                 .executeUpdate("UPDATE " + entity + " SET " + column + " = "
                         + update.toString() + " " + "WHERE id = " + id + ";");
     }
+
+    public static void updateInt(String entity, String column, int update,
+            int id) throws SQLException {
+        App.conn.createStatement().executeUpdate("UPDATE " + entity + " SET "
+                + column + " = " + update + " " + "WHERE id = " + id + ";");
+    }
+
 }

@@ -15,6 +15,7 @@ public class ManagerGUI implements ItemListener {
    final static String EDIT_ITEM_PANEL = "Edit/delete Items";
    final static String EDIT_PRODUCT_PANEL = "Edit/delete Product";
    final static String ADD_PRODUCT_PANEL = "Add Product";
+   final static String DEFINE_PRODUCT_PANEL = "Define product items";
 
    final static String[] ITEM_COLUMNS = { "name", "description",
          "unitisounces", "avgcostperunit" };
@@ -37,11 +38,13 @@ public class ManagerGUI implements ItemListener {
       JPanel editItem = null;
       JPanel editProduct = null;
       JPanel addProduct = null;
+
       try {
          editEmployee = createEditEmployeeCard();
          editItem = createEditItemCard(ITEM_COLUMNS, ITEM_COL_TYPES, "Item");
          editProduct = ProductGUI.createEditProductCard();
          addProduct = ProductGUI.createAddProductCard();
+
       } catch (SQLException e) {
          e.printStackTrace();
       }
@@ -143,7 +146,7 @@ public class ManagerGUI implements ItemListener {
       editEmployee.add(new JLabel("email"));
       editEmployee.add(info[4] = new JTextField(employee.getString(6), 64));
 
-      JButton enterButton = new JButton("Enter");
+      JButton enterButton = new JButton("Update");
       enterButton.putClientProperty("id", empID);
 
       JButton deleteButton = new JButton("Delete");
@@ -323,7 +326,7 @@ public class ManagerGUI implements ItemListener {
          editItem.add(info[i] = new JTextField(item.getString(i + 2), size));
       }
 
-      JButton enterButton = new JButton("Enter");
+      JButton enterButton = new JButton("Update");
       enterButton.putClientProperty("id", itemID);
 
       JButton deleteButton = new JButton("Delete");

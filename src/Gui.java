@@ -15,16 +15,15 @@ public class Gui {
     static JPanel ilp;
     static JPanel itemPlaceHolder;
     static JPanel selectedItem;
-    static Color normal = new Color(238,238,238);
+    static Color normal = new Color(238, 238, 238);
 
     private static final String WINDOW_NAME = "Frozen Rock Ice Cream Shop";
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 1000;
 
-
     public static void build() {
         frame = new JFrame(WINDOW_NAME);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
 
         panelWorkspace = new JPanel(new GridLayout(1, 2));
@@ -41,34 +40,21 @@ public class Gui {
         panelWorkspace.add(scrollPanelLeft);
         panelRight = new JPanel(new FlowLayout());
         panelWorkspace.add(panelRight);
-        
-        /* used for manually making buttons
-        for (int i = 0; i < 0; i++) {
-            JTextArea item = new JTextArea("vanilla icecream");
-            item.setMaximumSize(item.getPreferredSize());
-            item.setBackground(Color.CYAN);
-            ilp.add(item);
-        }
 
-        JButton button1 = new JButton("vanilla");
-        button1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("vanilla");
-            }
-        });
-        JButton button2 = new JButton("chocolate");
-        button2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("chocolate");
-            }
-        });
-        JButton button3 = new JButton("strawberry");
-        button3.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("strawberry");
-            }
-        });
-        */
+        /*
+         * used for manually making buttons for (int i = 0; i < 0; i++) { JTextArea item
+         * = new JTextArea("vanilla icecream");
+         * item.setMaximumSize(item.getPreferredSize()); item.setBackground(Color.CYAN);
+         * ilp.add(item); }
+         * 
+         * JButton button1 = new JButton("vanilla"); button1.addActionListener(new
+         * ActionListener() { public void actionPerformed(ActionEvent e) {
+         * addItem("vanilla"); } }); JButton button2 = new JButton("chocolate");
+         * button2.addActionListener(new ActionListener() { public void
+         * actionPerformed(ActionEvent e) { addItem("chocolate"); } }); JButton button3
+         * = new JButton("strawberry"); button3.addActionListener(new ActionListener() {
+         * public void actionPerformed(ActionEvent e) { addItem("strawberry"); } });
+         */
 
         JButton buttonNavToManager = new JButton("Change To Manager GUI");
         buttonNavToManager.addActionListener(new ActionListener() {
@@ -88,7 +74,6 @@ public class Gui {
             }
         });
 
-        
         getItemButtons();
 
         panelNavToolBar.add(buttonNavToManager);
@@ -100,33 +85,33 @@ public class Gui {
     private static void addItem(String id, String name, String price) {
         // itembox panel to hold All item information
 
-        JPanel itemBox = new JPanel(new BorderLayout(10,5));
-        itemBox.setMaximumSize(new Dimension(10000,25));
+        JPanel itemBox = new JPanel(new BorderLayout(10, 5));
+        itemBox.setMaximumSize(new Dimension(10000, 25));
         itemBox.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 selectItem(itemBox);
             }
         });
 
-        JPanel itemBoxLeft = new JPanel(new BorderLayout(2,0));
-        itemBoxLeft.setMaximumSize(new Dimension(80,25));
+        JPanel itemBoxLeft = new JPanel(new BorderLayout(2, 0));
+        itemBoxLeft.setMaximumSize(new Dimension(80, 25));
         itemBoxLeft.setOpaque(false);
-        itemBox.add(itemBoxLeft,BorderLayout.WEST);
-        
+        itemBox.add(itemBoxLeft, BorderLayout.WEST);
 
         // Delete Button to delete the item from the order
         JButton DeleteButton = new JButton("X");
         DeleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (selectedItem == itemBox) selectItem(null);
+                if (selectedItem == itemBox)
+                    selectItem(null);
                 ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
                 ilp.revalidate(); // refresh
                 ilp.repaint();
             }
         });
-        DeleteButton.setMaximumSize(new Dimension(20,20));
-        itemBoxLeft.add(DeleteButton,BorderLayout.WEST);
-        
+        DeleteButton.setMaximumSize(new Dimension(20, 20));
+        itemBoxLeft.add(DeleteButton, BorderLayout.WEST);
+
         // text displaying id
         JLabel idText = new JLabel(id);
         itemBoxLeft.add(idText, BorderLayout.EAST);
@@ -134,16 +119,16 @@ public class Gui {
         // text displaying name
         JLabel nameText = new JLabel(name);
         nameText.setMaximumSize(nameText.getPreferredSize());
-        nameText.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
-        itemBox.add(nameText,BorderLayout.CENTER);
+        nameText.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        itemBox.add(nameText, BorderLayout.CENTER);
 
         // text displaying price
         JLabel priceText = new JLabel(price);
         priceText.setMaximumSize(priceText.getPreferredSize());
-        priceText.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
-        itemBox.add(priceText,BorderLayout.EAST);
+        priceText.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        itemBox.add(priceText, BorderLayout.EAST);
 
-        //ilp.remove(itemPlaceHolder);
+        // ilp.remove(itemPlaceHolder);
         ilp.add(itemBox);
         addPlaceHolder();
         selectItem(itemBox);
@@ -152,40 +137,37 @@ public class Gui {
 
         System.out.print(itemBox.getBackground());
     }
-    private static void selectItem(JPanel p){
+
+    private static void selectItem(JPanel p) {
         if (selectedItem != null)
             selectedItem.setBackground(normal);
-        if (p != null){
+        if (p != null) {
             selectedItem = p;
             selectedItem.setBackground(Color.LIGHT_GRAY);
         }
     }
 
-    private static void addPlaceHolder(){
+    private static void addPlaceHolder() {
         return;
         /*
-        itemPlaceHolder = new JPanel(new BorderLayout(10,5));
-        itemPlaceHolder.setMaximumSize(new Dimension(10000,25));
-        itemPlaceHolder.setSize(new Dimension(10000,25));
-        itemPlaceHolder.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent evt) {
-                selectItem(itemPlaceHolder);
-            }
-        });
-        selectItem(itemPlaceHolder);
-        ilp.add(itemPlaceHolder);
-        */
+         * itemPlaceHolder = new JPanel(new BorderLayout(10,5));
+         * itemPlaceHolder.setMaximumSize(new Dimension(10000,25));
+         * itemPlaceHolder.setSize(new Dimension(10000,25));
+         * itemPlaceHolder.addMouseListener(new MouseAdapter() { public void
+         * mouseClicked(MouseEvent evt) { selectItem(itemPlaceHolder); } });
+         * selectItem(itemPlaceHolder); ilp.add(itemPlaceHolder);
+         */
     }
 
     private static void addModifier(String id, String name, String price) {
         // itembox panel to hold All item information
 
-        JPanel itemBox = new JPanel(new BorderLayout(10,5));
-        itemBox.setMaximumSize(new Dimension(10000,25));
+        JPanel itemBox = new JPanel(new BorderLayout(10, 5));
+        itemBox.setMaximumSize(new Dimension(10000, 25));
 
-        JPanel itemBoxLeft = new JPanel(new BorderLayout(2,0));
-        itemBoxLeft.setMaximumSize(new Dimension(80,25));
-        itemBox.add(itemBoxLeft,BorderLayout.WEST);
+        JPanel itemBoxLeft = new JPanel(new BorderLayout(2, 0));
+        itemBoxLeft.setMaximumSize(new Dimension(80, 25));
+        itemBox.add(itemBoxLeft, BorderLayout.WEST);
 
         // Delete Button to delete the item from the order
         JButton DeleteButton = new JButton("X");
@@ -196,10 +178,9 @@ public class Gui {
                 ilp.repaint();
             }
         });
-        DeleteButton.setMaximumSize(new Dimension(20,20));
-        itemBoxLeft.add(DeleteButton,BorderLayout.WEST);
+        DeleteButton.setMaximumSize(new Dimension(20, 20));
+        itemBoxLeft.add(DeleteButton, BorderLayout.WEST);
 
-        
         // text displaying id
         JLabel idText = new JLabel(id);
         itemBoxLeft.add(idText, BorderLayout.EAST);
@@ -207,54 +188,59 @@ public class Gui {
         // text displaying name
         JLabel nameText = new JLabel(name);
         nameText.setMaximumSize(nameText.getPreferredSize());
-        nameText.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
-        itemBox.add(nameText,BorderLayout.CENTER);
+        nameText.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        itemBox.add(nameText, BorderLayout.CENTER);
 
         // text displaying price
         JLabel priceText = new JLabel(price);
         priceText.setMaximumSize(priceText.getPreferredSize());
-        priceText.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
-        itemBox.add(priceText,BorderLayout.EAST);
+        priceText.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        itemBox.add(priceText, BorderLayout.EAST);
 
         ilp.add(itemBox);
         frame.setVisible(true);
     }
 
-    private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to the building reciept
-        JPanel itemBox = new JPanel(new BorderLayout(10,5));
-        itemBox.setMaximumSize(new Dimension(10000,25));
+    private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to
+                                           // the building reciept
+        JPanel itemBox = new JPanel(new BorderLayout(10, 5));
+        itemBox.setMaximumSize(new Dimension(10000, 25));
 
-        JPanel itemBoxLeft = new JPanel(new BorderLayout(2,0));
-        itemBoxLeft.setMaximumSize(new Dimension(80,25));
-        itemBox.add(itemBoxLeft,BorderLayout.WEST);
+        JPanel itemBoxLeft = new JPanel(new BorderLayout(2, 0));
+        itemBoxLeft.setMaximumSize(new Dimension(80, 25));
+        itemBox.add(itemBoxLeft, BorderLayout.WEST);
 
         JLabel idText = new JLabel("ID", SwingConstants.CENTER);
         idText.setMaximumSize(idText.getPreferredSize());
-        idText.setBorder(BorderFactory.createEmptyBorder(0,50,0,0));
+        idText.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 0));
         itemBoxLeft.add(idText, BorderLayout.EAST);
 
         // name label
         JLabel nameText = new JLabel("NAME", SwingConstants.CENTER);
         nameText.setMaximumSize(nameText.getPreferredSize());
-        itemBox.add(nameText,BorderLayout.CENTER);
+        itemBox.add(nameText, BorderLayout.CENTER);
 
         // price label
         JLabel priceText = new JLabel("PRICE", SwingConstants.CENTER);
         priceText.setMaximumSize(priceText.getPreferredSize());
-        priceText.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
-        itemBox.add(priceText,BorderLayout.EAST);
+        priceText.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+        itemBox.add(priceText, BorderLayout.EAST);
 
         ilp.add(itemBox);
 
         addPlaceHolder();
 
-        String[] ids = Format.rsToArray(Execute.runQuery("SELECT id FROM MenuProduct WHERE isOffered is TRUE;"));
+        String[] ids = Format.rsToArray(Execute.runQuery(
+                "SELECT id FROM MenuProduct WHERE isOffered is TRUE;"));
 
         for (String id : ids) {
 
-            String name = Format.rsToString(Execute.runQuery("SELECT name FROM MenuProduct WHERE id = " + id +";"));
-            String price = Format.rsToString(Execute.runQuery("SELECT currentPrice FROM MenuProduct WHERE id = " + id +";"));
-            
+            String name = Format.rsToString(Execute.runQuery(
+                    "SELECT name FROM MenuProduct WHERE id = " + id + ";"));
+            String price = Format.rsToString(Execute.runQuery(
+                    "SELECT currentPrice FROM MenuProduct WHERE id = " + id
+                            + ";"));
+
             // button to add item to order
             JButton button = new JButton(name);
             button.addActionListener(new ActionListener() {
@@ -268,24 +254,26 @@ public class Gui {
     }
 
     public static void finishOrder() throws SQLException {
-        String jimmyID = Format.rsToString(Execute.runQuery("SELECT id FROM Employee WHERE firstname = 'jimmy' AND lastname = 'bob' LIMIT 1;"));
+        String jimmyID = Format.rsToString(Execute.runQuery(
+                "SELECT id FROM Employee WHERE firstname = 'jimmy' AND lastname = 'bob' LIMIT 1;"));
         System.out.println(jimmyID);
         Transaction newTx = new Transaction(Integer.parseInt(jimmyID)); // CHANGE **
         newTx.finishTransaction();
         Component[] oi = ilp.getComponents(); // order items
 
-        // start at ilp 1 because 0th index is the title bar (id, name, price) not including the placeholder at the end
-        for (int i = 1; i < oi.length -1; i++){ // go through each item in order and make its respective insert 
-            Component[] ic = ((JPanel)oi[i]).getComponents(); // item components
-            String id = ((JLabel)((JPanel)ic[0]).getComponent(1)).getText(); // should be itemboxleft
-            
+        // start at ilp 1 because 0th index is the title bar (id, name, price) not
+        // including the placeholder at the end
+        for (int i = 1; i < oi.length - 1; i++) { // go through each item in order and make its respective insert
+            Component[] ic = ((JPanel) oi[i]).getComponents(); // item components
+            String id = ((JLabel) ((JPanel) ic[0]).getComponent(1)).getText(); // should be itemboxleft
+
             // add the product
             int txProd = newTx.addProduct(Integer.parseInt(id)); // add a new product
 
             // add the modifications
 
-            //eventually
-            //newTx.addProductModification(txProd, modID);
+            // eventually
+            // newTx.addProductModification(txProd, modID);
         }
         newTx.finishTransaction();
         System.out.println(newTx.getReceipt());
