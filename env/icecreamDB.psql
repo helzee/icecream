@@ -8,16 +8,6 @@ CREATE TABLE Item (
 	PRIMARY KEY (ID)
 );
 
-CREATE TABLE ItemLoss (
-	itemID 		serial NOT NULL,
-	timeOfOccurance timestamp NOT NULL,
-	unitsLost 	numeric(10,2) NOT NULL,
-	reason		character varying(256) NOT NULL,
-
-	PRIMARY KEY (itemID, timeOfOccurance),
-	FOREIGN KEY (itemID) REFERENCES Item(ID) DEFERRABLE INITIALLY DEFERRED
-);
-
 CREATE TABLE MenuCategory (
 	ID 	serial NOT NULL,
 	name 	character varying(32) NOT NULL UNIQUE,
