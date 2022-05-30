@@ -11,9 +11,9 @@ public class ManagerGUI implements ItemListener {
 
    final static String ADD_EMPLOYEE_PANEL = "Add Employee";
    final static String ADD_ITEM_PANEL = "Add Item";
-   final static String EDIT_EMPLOYEE_PANEL = "Edit/delete Employees";
-   final static String EDIT_ITEM_PANEL = "Edit/delete Items";
-   final static String EDIT_PRODUCT_PANEL = "Edit/delete Product";
+   final static String EDIT_EMPLOYEE_PANEL = "Edit Employees";
+   final static String EDIT_ITEM_PANEL = "Edit Items";
+   final static String EDIT_PRODUCT_PANEL = "Edit Product";
    final static String ADD_PRODUCT_PANEL = "Add Product";
    final static String DEFINE_PRODUCT_PANEL = "Define product items";
 
@@ -206,11 +206,16 @@ public class ManagerGUI implements ItemListener {
    private static JPanel createAddEmployeeCard() {
       JPanel addEmployee = new JPanel();
       JTextField[] info = new JTextField[5];
-      addEmployee.add(info[4] = new JTextField("BadgeNumber", 6));
-      addEmployee.add(info[0] = new JTextField("FirstName", 32));
-      addEmployee.add(info[1] = new JTextField("LastName", 32));
-      addEmployee.add(info[2] = new JTextField("PhoneNumber", 16));
-      addEmployee.add(info[3] = new JTextField("email", 64));
+      addEmployee.add(new JLabel("BadgeNumber"));
+      addEmployee.add(info[4] = new JTextField(6));
+      addEmployee.add(new JLabel("FirstName"));
+      addEmployee.add(info[0] = new JTextField(32));
+      addEmployee.add(new JLabel("LastName"));
+      addEmployee.add(info[1] = new JTextField(32));
+      addEmployee.add(new JLabel("PhoneNumber"));
+      addEmployee.add(info[2] = new JTextField(16));
+      addEmployee.add(new JLabel("email"));
+      addEmployee.add(info[3] = new JTextField(64));
       JButton enterButton = new JButton("Enter");
       enterButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -233,9 +238,12 @@ public class ManagerGUI implements ItemListener {
    private JPanel createAddItemCard() {
       JPanel addItem = new JPanel();
       JTextField[] info = new JTextField[5];
-      addItem.add(info[0] = new JTextField("name", 32));
-      addItem.add(info[1] = new JTextField("description", 32));
-      addItem.add(info[2] = new JTextField("costPerUnit", 12));
+      addItem.add(new JLabel("name"));
+      addItem.add(info[0] = new JTextField(32));
+      addItem.add(new JLabel("description"));
+      addItem.add(info[1] = new JTextField(32));
+      addItem.add(new JLabel("costPerUnit"));
+      addItem.add(info[2] = new JTextField(12));
       JButton enterButton = new JButton("Enter");
       enterButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
