@@ -356,8 +356,9 @@ public class ProductGUI {
                      "DELETE FROM " + entity + " WHERE id = " + id + ";");
                App.conn.commit();
             } catch (SQLException et) {
+
                System.err.println(
-                     "Can't delete product. It is probably used in a transaction");
+                     "Can't delete product. It is probably used in a transaction. Product no longer offered");
             }
             frame.dispose();
             ManagerGUI.createAndShowGUI();
@@ -366,7 +367,7 @@ public class ProductGUI {
       });
 
       editItem.add(enterButton);
-      editItem.add(deleteButton);
+      // editItem.add(deleteButton);
       editItem.add(defineItems);
 
       frame.add(editItem);

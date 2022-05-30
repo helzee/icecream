@@ -196,7 +196,7 @@ public class ManagerGUI implements ItemListener {
       });
 
       editEmployee.add(enterButton);
-      editEmployee.add(deleteButton);
+      // editEmployee.add(deleteButton);
 
       frame.add(editEmployee);
       frame.pack();
@@ -386,7 +386,7 @@ public class ManagerGUI implements ItemListener {
       });
 
       editItem.add(enterButton);
-      editItem.add(deleteButton);
+      // editItem.add(deleteButton);
 
       frame.add(editItem);
       frame.pack();
