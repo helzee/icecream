@@ -7,12 +7,14 @@ import java.math.BigDecimal;
 
 public class ManagerGUI implements ItemListener {
    JPanel cards; // a panel that uses CardLayout
-   static JFrame frame;
+   public static JFrame frame;
 
    final static String ADD_EMPLOYEE_PANEL = "Add Employee";
    final static String ADD_ITEM_PANEL = "Add Item";
    final static String EDIT_EMPLOYEE_PANEL = "Edit/delete Employees";
    final static String EDIT_ITEM_PANEL = "Edit/delete Items";
+   final static String EDIT_PRODUCT_PANEL = "Edit/delete Product";
+   final static String ADD_PRODUCT_PANEL = "Add Product";
 
    final static String[] ITEM_COLUMNS = { "name", "description",
          "unitisounces", "avgcostperunit" };
@@ -23,7 +25,8 @@ public class ManagerGUI implements ItemListener {
       // Put the JComboBox in a JPanel to get a nicer look.
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
       String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL,
-            EDIT_EMPLOYEE_PANEL, EDIT_ITEM_PANEL };
+            EDIT_EMPLOYEE_PANEL, EDIT_ITEM_PANEL, EDIT_PRODUCT_PANEL,
+            ADD_PRODUCT_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
@@ -32,9 +35,13 @@ public class ManagerGUI implements ItemListener {
       JPanel addEmployee = createAddEmployeeCard();
       JPanel editEmployee = null;
       JPanel editItem = null;
+      JPanel editProduct = null;
+      JPanel addProduct = null;
       try {
          editEmployee = createEditEmployeeCard();
          editItem = createEditItemCard(ITEM_COLUMNS, ITEM_COL_TYPES, "Item");
+         editProduct = ProductGUI.createEditProductCard();
+         addProduct = ProductGUI.createAddProductCard();
       } catch (SQLException e) {
          e.printStackTrace();
       }
@@ -48,6 +55,8 @@ public class ManagerGUI implements ItemListener {
       cards.add(addItem, ADD_ITEM_PANEL);
       cards.add(editEmployee, EDIT_EMPLOYEE_PANEL);
       cards.add(editItem, EDIT_ITEM_PANEL);
+      cards.add(editProduct, EDIT_PRODUCT_PANEL);
+      cards.add(addProduct, ADD_PRODUCT_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
@@ -123,11 +132,15 @@ public class ManagerGUI implements ItemListener {
 
       JPanel editEmployee = new JPanel();
       JTextField[] info = new JTextField[5];
-
+      editEmployee.add(new JLabel("badgenumber"));
       editEmployee.add(info[0] = new JTextField(employee.getString(2), 6));
+      editEmployee.add(new JLabel("firstName"));
       editEmployee.add(info[1] = new JTextField(employee.getString(3), 32));
+      editEmployee.add(new JLabel("lastname"));
       editEmployee.add(info[2] = new JTextField(employee.getString(4), 32));
+      editEmployee.add(new JLabel("phonenumber"));
       editEmployee.add(info[3] = new JTextField(employee.getString(5), 16));
+      editEmployee.add(new JLabel("email"));
       editEmployee.add(info[4] = new JTextField(employee.getString(6), 64));
 
       JButton enterButton = new JButton("Enter");
@@ -268,6 +281,7 @@ public class ManagerGUI implements ItemListener {
          itemButtons.get(i).addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                try {
+
                   generateEditItemWindow((int) ((JButton) e.getSource())
                         .getClientProperty("id"), entity, cols, types);
                   frame.dispose();
@@ -305,6 +319,7 @@ public class ManagerGUI implements ItemListener {
          } else if (types[i].toLowerCase().equals("numeric")) {
             size = 12;
          }
+         editItem.add(new JLabel(colNames[i]));
          editItem.add(info[i] = new JTextField(item.getString(i + 2), size));
       }
 
@@ -378,7 +393,7 @@ public class ManagerGUI implements ItemListener {
     * Create the GUI and show it. For thread safety, this method should be invoked
     * from the event dispatch thread.
     */
-   private static void createAndShowGUI() {
+   public static void createAndShowGUI() {
       // Create and set up the window.
       frame = new JFrame("Frozen Rock Ice Cream Shop - Manager");
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
