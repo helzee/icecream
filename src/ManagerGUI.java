@@ -133,6 +133,9 @@ public class ManagerGUI implements ItemListener {
       JButton enterButton = new JButton("Enter");
       enterButton.putClientProperty("id", empID);
 
+      JButton deleteButton = new JButton("Delete");
+      deleteButton.putClientProperty("id", empID);
+
       enterButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             try {
@@ -159,7 +162,25 @@ public class ManagerGUI implements ItemListener {
          }
       });
 
+      deleteButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            int id = (int) ((JButton) e.getSource()).getClientProperty("id");
+
+            try {
+               App.conn.createStatement().executeUpdate(
+                     "DELETE FROM Employee WHERE id = " + id + ";");
+               App.conn.commit();
+            } catch (SQLException et) {
+               et.printStackTrace();
+            }
+            frame.dispose();
+            ManagerGUI.createAndShowGUI();
+
+         }
+      });
+
       editEmployee.add(enterButton);
+      editEmployee.add(deleteButton);
 
       frame.add(editEmployee);
       frame.pack();
@@ -290,6 +311,8 @@ public class ManagerGUI implements ItemListener {
       JButton enterButton = new JButton("Enter");
       enterButton.putClientProperty("id", itemID);
 
+      JButton deleteButton = new JButton("Delete");
+      deleteButton.putClientProperty("id", itemID);
       enterButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             try {
@@ -321,7 +344,25 @@ public class ManagerGUI implements ItemListener {
          }
       });
 
+      deleteButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            int id = (int) ((JButton) e.getSource()).getClientProperty("id");
+
+            try {
+               App.conn.createStatement().executeUpdate(
+                     "DELETE FROM " + entity + " WHERE id = " + id + ";");
+               App.conn.commit();
+            } catch (SQLException et) {
+               et.printStackTrace();
+            }
+            frame.dispose();
+            ManagerGUI.createAndShowGUI();
+
+         }
+      });
+
       editItem.add(enterButton);
+      editItem.add(deleteButton);
 
       frame.add(editItem);
       frame.pack();
