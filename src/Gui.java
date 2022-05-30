@@ -13,6 +13,9 @@ public class Gui {
     static JScrollPane scrollPanelLeft;
     static JPanel panelRight;
     static JPanel ilp;
+    static JPanel itemPlaceHolder;
+    static JPanel selectedItem;
+    static Color normal = new Color(238,238,238);
 
     private static final String WINDOW_NAME = "Frozen Rock Ice Cream Shop";
     private static final int WIDTH = 1000;
@@ -84,6 +87,8 @@ public class Gui {
                 }
             }
         });
+
+        
         getItemButtons();
 
         panelNavToolBar.add(buttonNavToManager);
@@ -97,12 +102,81 @@ public class Gui {
 
         JPanel itemBox = new JPanel(new BorderLayout(10,5));
         itemBox.setMaximumSize(new Dimension(10000,25));
-        /*
-        JPanel itemMods = new JPanel(new BorderLayout(10,5));
-        itemMods.setMaximumSize(new Dimension(10000,25));
-        itemMods.setLayout(new BoxLayout(ilp, BoxLayout.Y_AXIS));
-        itemBox.add(itemMods, BorderLayout.SOUTH);
-        */
+        itemBox.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                selectItem(itemBox);
+            }
+        });
+
+        JPanel itemBoxLeft = new JPanel(new BorderLayout(2,0));
+        itemBoxLeft.setMaximumSize(new Dimension(80,25));
+        itemBoxLeft.setOpaque(false);
+        itemBox.add(itemBoxLeft,BorderLayout.WEST);
+        
+
+        // Delete Button to delete the item from the order
+        JButton DeleteButton = new JButton("X");
+        DeleteButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
+                ilp.revalidate(); // refresh
+                ilp.repaint();
+            }
+        });
+        DeleteButton.setMaximumSize(new Dimension(20,20));
+        itemBoxLeft.add(DeleteButton,BorderLayout.WEST);
+
+        
+        // text displaying id
+        JLabel idText = new JLabel(id);
+        itemBoxLeft.add(idText, BorderLayout.EAST);
+
+        // text displaying name
+        JLabel nameText = new JLabel(name);
+        nameText.setMaximumSize(nameText.getPreferredSize());
+        nameText.setBorder(BorderFactory.createEmptyBorder(0,10,0,0));
+        itemBox.add(nameText,BorderLayout.CENTER);
+
+        // text displaying price
+        JLabel priceText = new JLabel(price);
+        priceText.setMaximumSize(priceText.getPreferredSize());
+        priceText.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
+        itemBox.add(priceText,BorderLayout.EAST);
+
+        ilp.remove(itemPlaceHolder);
+        ilp.add(itemBox);
+        addPlaceHolder();
+        selectItem(itemPlaceHolder);
+
+        frame.setVisible(true);
+
+        System.out.print(itemBox.getBackground());
+    }
+    private static void selectItem(JPanel p){
+        if (selectedItem != null)
+            selectedItem.setBackground(normal);
+        selectedItem = p;
+        selectedItem.setBackground(Color.LIGHT_GRAY);
+    }
+
+    private static void addPlaceHolder(){
+        itemPlaceHolder = new JPanel(new BorderLayout(10,5));
+        itemPlaceHolder.setMaximumSize(new Dimension(10000,25));
+        itemPlaceHolder.setSize(new Dimension(10000,25));
+        itemPlaceHolder.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                selectItem(itemPlaceHolder);
+            }
+        });
+        selectItem(itemPlaceHolder);
+        ilp.add(itemPlaceHolder);
+    }
+
+    private static void addModifier(String id, String name, String price) {
+        // itembox panel to hold All item information
+
+        JPanel itemBox = new JPanel(new BorderLayout(10,5));
+        itemBox.setMaximumSize(new Dimension(10000,25));
 
         JPanel itemBoxLeft = new JPanel(new BorderLayout(2,0));
         itemBoxLeft.setMaximumSize(new Dimension(80,25));
@@ -141,10 +215,6 @@ public class Gui {
         frame.setVisible(true);
     }
 
-    private static void addModifier() {
-
-    }
-
     private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to the building reciept
         JPanel itemBox = new JPanel(new BorderLayout(10,5));
         itemBox.setMaximumSize(new Dimension(10000,25));
@@ -170,6 +240,8 @@ public class Gui {
         itemBox.add(priceText,BorderLayout.EAST);
 
         ilp.add(itemBox);
+
+        addPlaceHolder();
 
         String[] ids = Format.rsToArray(Execute.runQuery("SELECT id FROM MenuProduct WHERE isOffered is TRUE;"));
 
@@ -197,8 +269,8 @@ public class Gui {
         newTx.finishTransaction();
         Component[] oi = ilp.getComponents(); // order items
 
-        // start at ilp 1 because 0th index is the title bar (id, name, price)
-        for (int i = 1; i < oi.length; i++){ // go through each item in order and make its respective insert
+        // start at ilp 1 because 0th index is the title bar (id, name, price) not including the placeholder at the end
+        for (int i = 1; i < oi.length -1; i++){ // go through each item in order and make its respective insert 
             Component[] ic = ((JPanel)oi[i]).getComponents(); // item components
             String id = ((JLabel)((JPanel)ic[0]).getComponent(1)).getText(); // should be itemboxleft
             
