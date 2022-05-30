@@ -15,7 +15,8 @@ public class ManagerGUI implements ItemListener {
    final static String EDIT_ITEM_PANEL = "Edit Items";
    final static String EDIT_PRODUCT_PANEL = "Edit Product";
    final static String ADD_PRODUCT_PANEL = "Add Product";
-   final static String DEFINE_PRODUCT_PANEL = "Define product items";
+   final static String ADD_MODIFICATION_PANEL = "Add modification";
+   final static String EDIT_MODIFICATION_PANEL = "Edit modification";
 
    final static String[] ITEM_COLUMNS = { "name", "description",
          "unitisounces", "avgcostperunit" };
@@ -27,7 +28,8 @@ public class ManagerGUI implements ItemListener {
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
       String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL,
             EDIT_EMPLOYEE_PANEL, EDIT_ITEM_PANEL, EDIT_PRODUCT_PANEL,
-            ADD_PRODUCT_PANEL };
+            ADD_PRODUCT_PANEL, ADD_MODIFICATION_PANEL,
+            EDIT_MODIFICATION_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
@@ -38,12 +40,16 @@ public class ManagerGUI implements ItemListener {
       JPanel editItem = null;
       JPanel editProduct = null;
       JPanel addProduct = null;
+      JPanel addModification = null;
+      JPanel editModification = null;
 
       try {
          editEmployee = createEditEmployeeCard();
          editItem = createEditItemCard(ITEM_COLUMNS, ITEM_COL_TYPES, "Item");
          editProduct = ProductGUI.createEditProductCard();
          addProduct = ProductGUI.createAddProductCard();
+         addModification = ModificationGUI.createAddModificationCard();
+         editModification = ModificationGUI.createEditModificationCard();
 
       } catch (SQLException e) {
          e.printStackTrace();
@@ -60,6 +66,8 @@ public class ManagerGUI implements ItemListener {
       cards.add(editItem, EDIT_ITEM_PANEL);
       cards.add(editProduct, EDIT_PRODUCT_PANEL);
       cards.add(addProduct, ADD_PRODUCT_PANEL);
+      cards.add(addModification, ADD_MODIFICATION_PANEL);
+      cards.add(editModification, EDIT_MODIFICATION_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
@@ -415,6 +423,7 @@ public class ManagerGUI implements ItemListener {
 
       // Create and set up the content pane.
       ManagerGUI demo = new ManagerGUI();
+
       demo.addComponentToPane(frame.getContentPane());
 
       // Display the window.
