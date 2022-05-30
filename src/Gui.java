@@ -125,7 +125,6 @@ public class Gui {
         });
         DeleteButton.setMaximumSize(new Dimension(20,20));
         itemBoxLeft.add(DeleteButton,BorderLayout.WEST);
-
         
         // text displaying id
         JLabel idText = new JLabel(id);
