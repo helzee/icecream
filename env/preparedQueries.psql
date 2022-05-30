@@ -69,10 +69,10 @@ PREPARE getRemoves ( int ) AS
     ORDER BY I.name;
 
 PREPARE getTxTotal ( text ) AS
-    SELECT to_char(SUM(TP.salesPrice + M.salesPrice), '$999D99') AS subTotal,
-        to_char(SUM(TP.salesPrice + M.salesPrice) / 10, '$999D99') AS tax,
-        to_char(SUM(TP.salesPrice + M.salesPrice) * 1.1, '$999D99') AS total
+    SELECT to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)), '$999D99') AS subTotal,
+        to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)) / 10, '$999D99') AS tax,
+        to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)) * 1.1, '$999D99') AS total
     FROM Transaction T
         JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
-        JOIN Modification M ON ( M.transactionProductID = TP.ID)
+        LEFT JOIN Modification M ON ( M.transactionProductID = TP.ID)
     WHERE T.transactionNumber = $1;
