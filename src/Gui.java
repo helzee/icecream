@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.SQLException;
 
+import javax.sound.midi.SysexMessage;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicComboBoxUI.ItemHandler;
 
@@ -313,15 +314,18 @@ public class Gui {
 
 
     private static void showReciept(String s) {
+        System.out.println(s);
         JFrame receiptframe = new JFrame();
         JPanel panel = new JPanel(); 
         JScrollPane scrollpanel = new JScrollPane(panel);
 
         JLabel reciept = new JLabel();
-        reciept.setText("<html>" + s.replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</html>");
+        reciept.setText("<html><pre>" + s.replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</pre></html>");
+        //Font  f1  = new Font(Font.MONOSPACED, Font.PLAIN,  10);
+        //reciept.setFont(f1);
         receiptframe.add(scrollpanel);
         panel.add(reciept);
-        receiptframe.setSize(300,500);
+        receiptframe.setSize(400,500);
         receiptframe.setVisible(true);
     }
 
