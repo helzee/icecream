@@ -306,18 +306,23 @@ public class Gui {
                 lastItemTXID = newTx.addProduct(Integer.parseInt(id)); // add a new product
                 System.out.println("added item " + name);
             }
-
-
-            // add the product
-            //int txProd = newTx.addProduct(Integer.parseInt(id)); // add a new product
-
-            // add the modifications
-            
-            //eventually
-            
         }
         newTx.finishTransaction();
-        System.out.println(newTx.getReceipt());
+        showReciept(newTx.getReceipt());
+    }
+
+
+    private static void showReciept(String s) {
+        JFrame receiptframe = new JFrame();
+        JPanel panel = new JPanel(); 
+        JScrollPane scrollpanel = new JScrollPane(panel);
+
+        JLabel reciept = new JLabel();
+        reciept.setText("<html>" + s.replaceAll("<","&lt;").replaceAll(">", "&gt;").replaceAll("\n", "<br/>") + "</html>");
+        receiptframe.add(scrollpanel);
+        panel.add(reciept);
+        receiptframe.setSize(300,500);
+        receiptframe.setVisible(true);
     }
 
     private static int getIndex(JPanel p, Component c) {
