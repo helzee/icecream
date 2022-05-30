@@ -15,7 +15,7 @@ public class App {
         /* Execute.executeFile(st, "env/icecreamDB.psql"); */
 
         // Disappears after run time, must run every time
-        // Execute.executeFile("env/preparedQueries.psql");
+        Execute.executeFile("env/preparedQueries.psql");
         // Execute.executeFile("env/populateData.psql");
 
         // String[][] temp = Format
@@ -31,7 +31,6 @@ public class App {
         // Choice.build();
         Gui.build();
 
-        st.close();
     }
 
     private static void setUpConn() throws SQLException {
