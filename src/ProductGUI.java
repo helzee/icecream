@@ -180,6 +180,7 @@ public class ProductGUI {
    public static JPanel createAddProductCard() {
 
       JPanel addProduct = new JPanel();
+      addProduct.setLayout(new BoxLayout(addProduct, BoxLayout.Y_AXIS));
       JTextField[] info = new JTextField[cols.length];
 
       for (int i = 1; i < cols.length - 1; i++) {
@@ -222,6 +223,7 @@ public class ProductGUI {
 
    public static JPanel createEditProductCard() throws SQLException {
       JPanel editItem = new JPanel();
+      editItem.setLayout(new BoxLayout(editItem, BoxLayout.Y_AXIS));
 
       String query = "SELECT id";
       for (String s : cols) {
@@ -273,6 +275,7 @@ public class ProductGUI {
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
       JPanel editItem = new JPanel();
+      editItem.setLayout(new BoxLayout(editItem, BoxLayout.Y_AXIS));
       JTextField[] info = new JTextField[cols.length];
 
       for (int i = 0; i < cols.length; i++) {
