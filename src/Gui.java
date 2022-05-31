@@ -1,10 +1,10 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
-import javax.sound.midi.SysexMessage;
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicComboBoxUI.ItemHandler;
 
 public class Gui {
     static JFrame frame;
@@ -13,19 +13,28 @@ public class Gui {
     static JPanel panelNavToolBar;
     static JScrollPane scrollPanelLeft;
     static JPanel panelRight;
+    static JPanel panelProducts;
+    static JPanel panelModAdds;
+    static JPanel panelModRemoves;
+
     static JPanel ilp;
     static JPanel itemPlaceHolder;
     static JPanel selectedItem;
     static Color normal = new Color(238,238,238);
+    static JLabel WorkingEmployee;
 
     private static final String WINDOW_NAME = "Frozen Rock Ice Cream Shop";
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 1000;
 
 
-    public static void build() {
+    public static void build() throws SQLException {
+        if (WorkingEmployee == null){
+            showEmployeeSelect();
+            return;
+        }
+
         frame = new JFrame(WINDOW_NAME);
-        //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WIDTH, HEIGHT);
 
         panelWorkspace = new JPanel(new GridLayout(1, 2));
@@ -37,39 +46,55 @@ public class Gui {
 
         ilp = new JPanel();
         scrollPanelLeft = new JScrollPane(ilp);
+        scrollPanelLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPanelLeft.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         ilp.setLayout(new BoxLayout(ilp, BoxLayout.Y_AXIS));
 
         panelWorkspace.add(scrollPanelLeft);
-        panelRight = new JPanel(new FlowLayout());
+        panelRight = new JPanel( new GridLayout(3,1));
         panelWorkspace.add(panelRight);
-        
-        /* used for manually making buttons
-        for (int i = 0; i < 0; i++) {
-            JTextArea item = new JTextArea("vanilla icecream");
-            item.setMaximumSize(item.getPreferredSize());
-            item.setBackground(Color.CYAN);
-            ilp.add(item);
-        }
 
-        JButton button1 = new JButton("vanilla");
-        button1.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("vanilla");
-            }
-        });
-        JButton button2 = new JButton("chocolate");
-        button2.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("chocolate");
-            }
-        });
-        JButton button3 = new JButton("strawberry");
-        button3.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                addItem("strawberry");
-            }
-        });
-        */
+
+        JPanel panelMainProducts = new JPanel(new BorderLayout());
+        panelProducts = new JPanel(new WrapLayout());
+        JScrollPane scrollProducts = new JScrollPane(panelProducts);
+        scrollProducts.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollProducts.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        JLabel l0 = new JLabel("PRODUCTS", SwingConstants.CENTER);
+        l0.setFont(new Font("Dialog", Font.PLAIN, 20));
+        l0.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+        panelMainProducts.add(l0, BorderLayout.NORTH);
+        panelMainProducts.add(scrollProducts, BorderLayout.CENTER);
+        panelRight.add(panelMainProducts);
+
+        JPanel panelMainModAdds = new JPanel(new BorderLayout());
+        panelModAdds = new JPanel(new WrapLayout());
+        JScrollPane scrollModAdds = new JScrollPane(panelModAdds);
+        scrollModAdds.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollModAdds.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        JLabel l1 = new JLabel("MODIFICATIONS", SwingConstants.CENTER);
+        l1.setFont(new Font("Dialog", Font.PLAIN, 20));
+        l1.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+        panelMainModAdds.add(l1, BorderLayout.NORTH);
+        panelMainModAdds.add(scrollModAdds, BorderLayout.CENTER);
+
+        panelRight.add(panelMainModAdds);
+
+
+        JPanel panelMainModRemoves = new JPanel(new BorderLayout());
+        panelModRemoves = new JPanel(new WrapLayout());
+        JScrollPane scrollModRemoves = new JScrollPane(panelModRemoves);
+        scrollModRemoves.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollModRemoves.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        JLabel l2 = new JLabel("REMOVALS", SwingConstants.CENTER);
+        l2.setFont(new Font("Dialog", Font.PLAIN, 20));
+        l2.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+        panelMainModRemoves.add(l2, BorderLayout.NORTH);
+        panelMainModRemoves.add(scrollModRemoves, BorderLayout.CENTER);
+        
+        panelRight.add(panelMainModRemoves);
+
+
 
         JButton buttonNavToManager = new JButton("Change To Manager GUI");
         buttonNavToManager.addActionListener(new ActionListener() {
@@ -78,6 +103,7 @@ public class Gui {
                 ManagerGUI.build();
             }
         });
+
         JButton finishOrder = new JButton("Complete Order");
         finishOrder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -89,23 +115,37 @@ public class Gui {
             }
         });
 
-        
+        JButton employeeSelect = new JButton("Select Worker");
+        employeeSelect.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    showEmployeeSelect();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
+
         getItemButtons();
 
         panelNavToolBar.add(buttonNavToManager);
         panelNavToolBar.add(finishOrder);
+        panelNavToolBar.add(employeeSelect);
+        panelNavToolBar.add(WorkingEmployee);
 
         frame.setVisible(true);
     }
 
-    private static void addItem(String id, String name, String price) {
-        // itembox panel to hold All item information
-
+    private static void addItem(String id, String name, String price) throws SQLException {
         JPanel itemBox = new JPanel(new BorderLayout(10,5));
         itemBox.setMaximumSize(new Dimension(10000,25));
         itemBox.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
-                selectItem(itemBox);
+                try {
+                    selectItem(itemBox);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -119,7 +159,12 @@ public class Gui {
         JButton DeleteButton = new JButton("X");
         DeleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (selectedItem == itemBox) selectItem(null);
+                if (selectedItem == itemBox)
+                    try {
+                        selectItem(null);
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
                 ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
                 ilp.revalidate(); // refresh
                 ilp.repaint();
@@ -149,26 +194,31 @@ public class Gui {
         selectItem(itemBox);
 
         frame.setVisible(true);
-
-        System.out.print(itemBox.getBackground());
     }
-    private static void selectItem(JPanel p){
+
+    private static void selectItem(JPanel p) throws SQLException{
         if (selectedItem != null)
             selectedItem.setBackground(normal);
         if (p != null){
             selectedItem = p;
             selectedItem.setBackground(Color.LIGHT_GRAY);
         }
+
+        updateRemoveButtons();
     }
 
-    private static void addItemMod(String id, String name, String price) {
+    private static void addItemMod(String id, String name, String price, Boolean add) {
         // itembox panel to hold All item information
 
         JPanel itemBox = new JPanel(new BorderLayout(10,5));
         itemBox.setMaximumSize(new Dimension(10000,25));
         itemBox.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
-                selectItem(itemBox);
+                try {
+                    selectItem(itemBox);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -182,7 +232,13 @@ public class Gui {
         JButton DeleteButton = new JButton("X");
         DeleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (selectedItem == itemBox) selectItem(null);
+                if (selectedItem == itemBox)
+                    try {
+                        selectItem(null);
+                    } catch (SQLException e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
                 ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
                 ilp.revalidate(); // refresh
                 ilp.repaint();
@@ -196,7 +252,11 @@ public class Gui {
         itemBoxLeft.add(idText, BorderLayout.EAST);
 
         // text displaying name
-        JLabel nameText = new JLabel("(" + name + ")");
+        JLabel nameText;
+        if (add)
+            nameText = new JLabel("+   " + name);
+        else
+            nameText = new JLabel("-    " + name);
         nameText.setMaximumSize(nameText.getPreferredSize());
         nameText.setBorder(BorderFactory.createEmptyBorder(0,40,0,0));
         itemBox.add(nameText,BorderLayout.CENTER);
@@ -211,11 +271,8 @@ public class Gui {
         ilp.add(itemBox,getIndex(ilp, selectedItem));
 
         frame.setVisible(true);
-
-        System.out.print(itemBox.getBackground());
     }
     
-  
     private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to the building reciept
         JPanel itemBox = new JPanel(new BorderLayout(10,5));
         itemBox.setMaximumSize(new Dimension(10000,25));
@@ -242,9 +299,9 @@ public class Gui {
 
         ilp.add(itemBox);
 
-        String[] idsitem = Format.rsToArray(Execute.runQuery("SELECT id FROM MenuProduct WHERE isOffered is TRUE;"));
+        String[] idsproj = Format.rsToArray(Execute.runQuery("SELECT id FROM MenuProduct WHERE isOffered is TRUE;"));
 
-        for (String id : idsitem) {
+        for (String id : idsproj) {
 
             String name = Format.rsToString(Execute.runQuery("SELECT name FROM MenuProduct WHERE id = " + id +";"));
             String price = Format.rsToString(Execute.runQuery("SELECT currentPrice FROM MenuProduct WHERE id = " + id +";"));
@@ -253,11 +310,15 @@ public class Gui {
             JButton button = new JButton(name);
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    addItem(id, name, price);
+                    try {
+                        addItem(id, name, price);
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             });
-
-            panelRight.add(button);
+            button.setBackground(new Color(204, 223, 255));
+            panelProducts.add(button);
         }
 
         String[] idsmod = Format.rsToArray(Execute.runQuery("SELECT id FROM MenuModification WHERE isOffered is TRUE;"));
@@ -271,37 +332,65 @@ public class Gui {
             JButton button = new JButton(name);
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    addItemMod(id, name, price);
+                    addItemMod(id, name, price, true);
                 }
             });
-            button.setBackground(Color.LIGHT_GRAY);
-            panelRight.add(button);
+            button.setBackground(new Color(206, 240, 209));
+            panelModAdds.add(button);
+            /*
+            JButton button2 = new JButton(name);
+            button2.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    addItemMod(id, name, "0.00", false);
+                }
+            });
+            button2.setBackground(new Color(209, 169, 171));
+            panelModRemoves.add(button2);
+            */
         }
+        /*
+        String[] idsitem = Format.rsToArray(Execute.runQuery("SELECT id FROM Item WHERE isOffered is TRUE;"));
+
+        for (String id : idsitem) {
+
+            String name = Format.rsToString(Execute.runQuery("SELECT name FROM MenuProduct WHERE id = " + id +";"));
+            String price = Format.rsToString(Execute.runQuery("SELECT currentPrice FROM MenuProduct WHERE id = " + id +";"));
+            
+            // button to add item to order
+            JButton button = new JButton(name);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    addItem(id, name, price);
+                }
+            });
+            button.setBackground(new Color(204, 223, 255));
+            panelProducts.add(button);
+        }
+        */
     }
 
     public static void finishOrder() throws SQLException {
-        String jimmyID = Format.rsToString(Execute.runQuery("SELECT id, firstname, lastname FROM Employee"));
-        System.out.println(jimmyID);
-        //String jimmyID = Format.rsToString(Execute.runQuery("SELECT id FROM Employee WHERE firstname = 'jimmy' AND lastname = 'bob' LIMIT 1;"));
-        System.out.println(jimmyID);
-        Transaction newTx = new Transaction(Integer.parseInt(jimmyID)); // CHANGE **
+        Transaction newTx = new Transaction((int)(WorkingEmployee.getClientProperty("id"))); // CHANGE **
         newTx.finishTransaction();
         Component[] oi = ilp.getComponents(); // order items
-        
         int lastItemTXID = -1;
-
         // start at ilp 1 because 0th index is the title bar (id, name, price) not including the placeholder at the end
         for (int i = 1; i < oi.length; i++){ // go through each item in order and make its respective insert 
             Component[] ic = ((JPanel)oi[i]).getComponents(); // item components
             String id = ((JLabel)((JPanel)ic[0]).getComponent(1)).getText(); // should be itemboxleft
             String name = (((JLabel)ic[1])).getText(); // should be itemboxleft
+            System.out.println(name);
+            System.out.println(id);
 
-            //System.out.println(name);
-
-            if (name.charAt(0) == '(' && name.charAt(name.length() - 1) == ')' ) { // is a mod
+            if (name.charAt(0) == '+') { // is a mod
                 if (lastItemTXID != -1)
                     newTx.addProductModification(lastItemTXID, Integer.parseInt(id)); // add a mod to the last product
                     System.out.println("added mod " + name + " to last item created");
+            }
+            else if (name.charAt(0) == '-') { // is a mod removal
+                if (lastItemTXID != -1)
+                    newTx.removeProductIngredient(lastItemTXID, Integer.parseInt(id)); // add a mod to the last product
+                    System.out.println("Removed ingredient " + name + " to last item created");
             }
             else{
                 lastItemTXID = newTx.addProduct(Integer.parseInt(id)); // add a new product
@@ -310,11 +399,10 @@ public class Gui {
         }
         newTx.finishTransaction();
         showReciept(newTx.getReceipt());
+        clearILP();
     }
 
-
     private static void showReciept(String s) {
-        System.out.println(s);
         JFrame receiptframe = new JFrame();
         JPanel panel = new JPanel(); 
         JScrollPane scrollpanel = new JScrollPane(panel);
@@ -338,4 +426,98 @@ public class Gui {
         System.out.println("component not in list");
         return cl.length;
     }
+
+    private static void showEmployeeSelect() throws SQLException {
+        JFrame newframe = new JFrame("Select Working Employee");
+
+        JPanel editEmployee = new JPanel();
+        JScrollPane scrollpanel = new JScrollPane(editEmployee);
+        editEmployee.setLayout(new BoxLayout(editEmployee, BoxLayout.Y_AXIS));
+        ResultSet employees = Execute.runQuery("SELECT id, firstName, LastName FROM Employee;");
+  
+        Vector<JButton> empButtons = new Vector<JButton>();
+        Vector<Integer> empIDs = new Vector<Integer>();
+        JButton button = null;
+        while (employees.next()) {
+           empIDs.add(employees.getInt(1));
+           empButtons.add(button = new JButton(
+                 employees.getString(2) + " " + employees.getString(3)));
+           button.putClientProperty("id", employees.getInt(1));
+        }
+  
+        for (JButton b : empButtons) {
+            JPanel p = new JPanel( new BorderLayout());
+            p.add(b);
+           editEmployee.add(p);
+        }
+  
+        for (int i = 0; i < empButtons.size(); i++) {
+            empButtons.get(i).addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    if (WorkingEmployee == null){
+                        WorkingEmployee = new JLabel();
+                    }
+                    WorkingEmployee.setText("Current Worker: " + ((JButton) e.getSource()).getText());
+                    WorkingEmployee.putClientProperty("id", ((int) ((JButton) e.getSource()).getClientProperty("id")));
+                    ((JFrame)(scrollpanel.getParent().getParent().getParent().getParent())).dispose();
+                    try {
+                        updateWorkerText();
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            });
+        }
+        
+        newframe.add(scrollpanel);
+        newframe.setSize(400,200);
+        newframe.setVisible(true);
+     }
+
+    private static void updateWorkerText() throws SQLException {
+        if (frame == null){
+            build();
+        }
+    }
+
+    private static void updateRemoveButtons() throws SQLException {
+        panelModRemoves.removeAll();
+        if (selectedItem == null) return;
+
+        Component[] ic = (selectedItem).getComponents(); // item components
+        String projID = ((JLabel)((JPanel)ic[0]).getComponent(1)).getText(); // should be itemboxleft
+        String[] idsitem = Format.rsToArray(Execute.runQuery("SELECT itemId FROM ProductIngredient WHERE productID = " + projID + ";"));
+
+        for (String id : idsitem) {
+
+            String name = Format.rsToString(Execute.runQuery("SELECT name FROM Item WHERE id = " + id +";"));
+            
+            // button to add item to order
+            JButton button = new JButton(name);
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    addItemMod(id, name, "0.00", false);
+                }
+            });
+            button.setBackground(new Color(209, 169, 171));
+            panelModRemoves.add(button);
+        }
+        panelModRemoves.revalidate(); // refresh
+        panelModRemoves.repaint();
+    }
+
+    private static void clearILP() throws SQLException {
+        selectItem(null);
+        updateRemoveButtons();
+        if (ilp.getComponentCount() <= 1) return;
+        while (ilp.getComponent(1) != null){
+            ilp.remove(ilp.getComponent(1));
+            if (ilp.getComponentCount() <= 1) break;
+        }
+        ilp.revalidate(); // refresh
+        ilp.repaint();
+    }
 }
+
+
+
