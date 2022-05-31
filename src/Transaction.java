@@ -57,7 +57,7 @@ public class Transaction {
 
             PreparedStatement newTxProd = App.conn.prepareStatement(
                     "INSERT INTO TransactionProduct (productID, transactionID, salesPrice, isRefunded)"
-                            + "VALUES (?,?,?,true) RETURNING ID;");
+                            + "VALUES (?,?,?,false) RETURNING ID;");
             newTxProd.setInt(1, productID);
             newTxProd.setInt(2, txID);
             newTxProd.setBigDecimal(3, currentPrice);
