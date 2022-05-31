@@ -159,13 +159,20 @@ public class Gui {
         JButton DeleteButton = new JButton("X");
         DeleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (selectedItem == itemBox)
+                if (selectedItem == itemBox){
                     try {
                         selectItem(null);
+                        updateRemoveButtons();
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
+                }
+                try {
                     deleteItemAndMod(itemBox);
+                } catch (SQLException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
                 //ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
                 //ilp.revalidate(); // refresh
                 //ilp.repaint();
@@ -190,19 +197,23 @@ public class Gui {
         priceText.setBorder(BorderFactory.createEmptyBorder(0,0,0,10));
         itemBox.add(priceText,BorderLayout.EAST);
 
-        //ilp.remove(itemPlaceHolder);
         ilp.add(itemBox);
         selectItem(itemBox);
+        updateRemoveButtons();
 
         frame.setVisible(true);
+        
     }
 
     private static void selectItem(JPanel p) throws SQLException{
         if (selectedItem != null)
             selectedItem.setBackground(normal);
+        
         if (p != null){
             selectedItem = p;
             selectedItem.setBackground(Color.LIGHT_GRAY);
+        }else{
+            selectedItem = null;
         }
 
         updateRemoveButtons();
@@ -236,6 +247,7 @@ public class Gui {
                 if (selectedItem == itemBox)
                     try {
                         selectItem(null);
+                        updateRemoveButtons();
                     } catch (SQLException e1) {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
@@ -275,13 +287,14 @@ public class Gui {
         frame.setVisible(true);
     }
     
-    private static void deleteItemAndMod(Component c){
+    private static void deleteItemAndMod(Component c) throws SQLException{
         int i = getIndex(ilp, c) - 1;
         ilp.remove(i); // remove the item from the Item Left Panel (ilp)
 
-        if (ilp.getComponentCount() < i) {
+        if (ilp.getComponentCount() <= i) {
             ilp.revalidate(); // refresh
             ilp.repaint();
+            updateRemoveButtons();
             return;
         }
 
@@ -299,6 +312,7 @@ public class Gui {
 
         ilp.revalidate(); // refresh
         ilp.repaint();
+        updateRemoveButtons();
     }
 
     private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to the building reciept
@@ -485,7 +499,11 @@ public class Gui {
 
     private static void updateRemoveButtons() throws SQLException {
         panelModRemoves.removeAll();
-        if (selectedItem == null) return;
+        if (selectedItem == null){
+            panelModRemoves.revalidate(); // refresh
+            panelModRemoves.repaint();
+            return;
+        }
 
         Component[] ic = (selectedItem).getComponents(); // item components
         String projID = ((JLabel)((JPanel)ic[0]).getComponent(1)).getText(); // should be itemboxleft
