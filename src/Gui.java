@@ -165,9 +165,10 @@ public class Gui {
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
-                ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
-                ilp.revalidate(); // refresh
-                ilp.repaint();
+                    deleteItemAndMod(itemBox);
+                //ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
+                //ilp.revalidate(); // refresh
+                //ilp.repaint();
             }
         });
         DeleteButton.setMaximumSize(new Dimension(20,20));
@@ -239,6 +240,7 @@ public class Gui {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
+
                 ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
                 ilp.revalidate(); // refresh
                 ilp.repaint();
@@ -273,6 +275,32 @@ public class Gui {
         frame.setVisible(true);
     }
     
+    private static void deleteItemAndMod(Component c){
+        int i = getIndex(ilp, c) - 1;
+        ilp.remove(i); // remove the item from the Item Left Panel (ilp)
+
+        if (ilp.getComponentCount() < i) {
+            ilp.revalidate(); // refresh
+            ilp.repaint();
+            return;
+        }
+
+        Component next = ilp.getComponent(i);
+        Component[] ic = ((JPanel)next).getComponents(); // item components
+        String name = (((JLabel)ic[1])).getText(); // should be itemboxleft
+
+        while (name.charAt(0) == '+' || name.charAt(0) == '-'){
+            ilp.remove(i); // remove the item from the Item Left Panel (ilp)
+            if (ilp.getComponentCount() <= i) break;
+            next = ilp.getComponent(i);
+            ic = ((JPanel)next).getComponents(); // item components
+            name = (((JLabel)ic[1])).getText(); // should be itemboxleft
+        }
+
+        ilp.revalidate(); // refresh
+        ilp.repaint();
+    }
+
     private static void getItemButtons() { // change so that when clicked it adds the id as well as the name and price to the building reciept
         JPanel itemBox = new JPanel(new BorderLayout(10,5));
         itemBox.setMaximumSize(new Dimension(10000,25));
@@ -337,36 +365,7 @@ public class Gui {
             });
             button.setBackground(new Color(206, 240, 209));
             panelModAdds.add(button);
-            /*
-            JButton button2 = new JButton(name);
-            button2.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    addItemMod(id, name, "0.00", false);
-                }
-            });
-            button2.setBackground(new Color(209, 169, 171));
-            panelModRemoves.add(button2);
-            */
         }
-        /*
-        String[] idsitem = Format.rsToArray(Execute.runQuery("SELECT id FROM Item WHERE isOffered is TRUE;"));
-
-        for (String id : idsitem) {
-
-            String name = Format.rsToString(Execute.runQuery("SELECT name FROM MenuProduct WHERE id = " + id +";"));
-            String price = Format.rsToString(Execute.runQuery("SELECT currentPrice FROM MenuProduct WHERE id = " + id +";"));
-            
-            // button to add item to order
-            JButton button = new JButton(name);
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    addItem(id, name, price);
-                }
-            });
-            button.setBackground(new Color(204, 223, 255));
-            panelProducts.add(button);
-        }
-        */
     }
 
     public static void finishOrder() throws SQLException {
@@ -522,6 +521,42 @@ public class Gui {
         ilp.repaint();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
