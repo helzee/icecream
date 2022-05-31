@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.Border;
+
 import java.sql.*;
 import java.util.*;
 import java.math.BigDecimal;
@@ -17,6 +19,7 @@ public class ManagerGUI implements ItemListener {
    final static String ADD_PRODUCT_PANEL = "Add Product";
    final static String ADD_MODIFICATION_PANEL = "Add modification";
    final static String EDIT_MODIFICATION_PANEL = "Edit modification";
+   final static String CASHFLOW_PANEL = "View Cash Flow";
 
    final static String[] ITEM_COLUMNS = { "name", "description",
          "unitisounces", "avgcostperunit" };
@@ -28,8 +31,8 @@ public class ManagerGUI implements ItemListener {
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
       String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL,
             EDIT_EMPLOYEE_PANEL, EDIT_ITEM_PANEL, EDIT_PRODUCT_PANEL,
-            ADD_PRODUCT_PANEL, ADD_MODIFICATION_PANEL,
-            EDIT_MODIFICATION_PANEL };
+            ADD_PRODUCT_PANEL, ADD_MODIFICATION_PANEL, EDIT_MODIFICATION_PANEL,
+            CASHFLOW_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
@@ -42,6 +45,7 @@ public class ManagerGUI implements ItemListener {
       JPanel addProduct = null;
       JPanel addModification = null;
       JPanel editModification = null;
+      JPanel viewCashFlow = null;
 
       try {
          editEmployee = createEditEmployeeCard();
@@ -50,6 +54,7 @@ public class ManagerGUI implements ItemListener {
          addProduct = ProductGUI.createAddProductCard();
          addModification = ModificationGUI.createAddModificationCard();
          editModification = ModificationGUI.createEditModificationCard();
+         viewCashFlow = viewCashFlow();
 
       } catch (SQLException e) {
          e.printStackTrace();
@@ -68,10 +73,44 @@ public class ManagerGUI implements ItemListener {
       cards.add(addProduct, ADD_PRODUCT_PANEL);
       cards.add(addModification, ADD_MODIFICATION_PANEL);
       cards.add(editModification, EDIT_MODIFICATION_PANEL);
+      cards.add(viewCashFlow, CASHFLOW_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
 
+   }
+
+   private static JPanel viewCashFlow() throws SQLException {
+      JPanel main = new JPanel();
+      main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
+
+      ResultSet rs = App.conn.createStatement().executeQuery(
+            "SELECT COALESCE(SUM(salesPrice), 0)::Numeric(6,2) FROM TransactionProduct"
+                  + " WHERE isRefunded = false;");
+      rs.next();
+      JLabel grossIncome = new JLabel(
+            "Total Sales:            " + rs.getString(1));
+      BigDecimal grossInc = rs.getBigDecimal(1);
+      main.add(grossIncome);
+      rs = App.conn.createStatement().executeQuery(
+            "SELECT SUM(avgCostPerUnit * unitsNeeded)::Numeric(6,2) FROM TransactionProduct"
+                  + " JOIN MenuProduct ON (MenuProduct.id = TransactionProduct.productID)"
+                  + " JOIN ProductIngredient ON (ProductIngredient.productID = MenuProduct.id)"
+                  + " JOIN Item ON (itemID = Item.id) GROUP BY ProductIngredient"
+                  + " ;");
+      rs.next();
+      BigDecimal expenses = rs.getBigDecimal(1);
+      JLabel totalExpenses = new JLabel(
+            "Total Expenses:    " + rs.getString(1));
+
+      main.add(totalExpenses);
+
+      BigDecimal netSales = grossInc.subtract(expenses);
+      JLabel netSalesLabel = new JLabel("Net Sales:             " + netSales);
+
+      main.add(netSalesLabel);
+
+      return main;
    }
 
    // private static void addNavBar(JPanel panelMain, JFrame frame) {
