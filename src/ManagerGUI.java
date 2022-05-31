@@ -98,29 +98,21 @@ public class ManagerGUI implements ItemListener {
       });
       main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
 
-      ResultSet rs = App.conn.createStatement().executeQuery(
-            "SELECT COALESCE(SUM(salesPrice), 0)::Numeric(6,2) FROM TransactionProduct"
-                  + " WHERE isRefunded = false;");
+      ResultSet rs = App.conn.createStatement()
+            .executeQuery("Execute getMoneyStats;");
       rs.next();
       JLabel grossIncome = new JLabel(
             "Total Sales:            " + rs.getString(1));
-      BigDecimal grossInc = rs.getBigDecimal(1);
+
       main.add(grossIncome);
-      rs = App.conn.createStatement().executeQuery(
-            "SELECT SUM(avgCostPerUnit * unitsNeeded)::Numeric(6,2) FROM TransactionProduct"
-                  + " JOIN MenuProduct ON (MenuProduct.id = TransactionProduct.productID)"
-                  + " JOIN ProductIngredient ON (ProductIngredient.productID = MenuProduct.id)"
-                  + " JOIN Item ON (itemID = Item.id) GROUP BY ProductIngredient"
-                  + " " + " ;");
-      rs.next();
-      BigDecimal expenses = rs.getBigDecimal(1);
+
       JLabel totalExpenses = new JLabel(
-            "Total Expenses:    " + rs.getString(1));
+            "Total Expenses:    " + rs.getString(2));
 
       main.add(totalExpenses);
 
-      BigDecimal netSales = grossInc.subtract(expenses);
-      JLabel netSalesLabel = new JLabel("Net Sales:             " + netSales);
+      JLabel netSalesLabel = new JLabel(
+            "Net Sales:             " + rs.getString(3));
 
       main.add(netSalesLabel);
 
