@@ -23,9 +23,11 @@ public class Execute {
 
         } catch (FileNotFoundException e) {
             System.out.println("Could not find file: " + filePath);
+            e.printStackTrace();
             System.exit(1);
         } catch (SQLException e) {
             System.out.println("Failed to execute:\n" + nextLine);
+            e.printStackTrace();
             System.exit(1);
         }
     }

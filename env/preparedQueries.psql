@@ -67,10 +67,42 @@ PREPARE getRemoves ( int ) AS
     ORDER BY I.name;
 
 PREPARE getTxTotal ( text ) AS
-    SELECT to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)), '$999D99') AS subTotal,
-        to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)) / 10, '$999D99') AS tax,
-        to_char(SUM(TP.salesPrice + COALESCE(M.salesPrice, 0)) * 1.1, '$999D99') AS total
-    FROM Transaction T
-        JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
-        LEFT JOIN Modification M ON ( M.transactionProductID = TP.ID)
-    WHERE T.transactionNumber = $1;
+    SELECT to_char(T1.tpsum + T2.msum, '$999D99') AS subTotal,
+        to_char((T1.tpsum + T2.msum) / 10, '$999D99') AS tax,
+        to_char((T1.tpsum + T2.msum) * 1.1, '$999D99') AS total
+    FROM ( SELECT SUM(TP.salesPrice) AS tpsum
+           FROM Transaction T
+            JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
+           WHERE T.transactionNumber = $1
+         ) AS T1
+        JOIN ( SELECT SUM(M.salesPrice) AS msum
+               FROM Transaction T
+                JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
+                JOIN Modification M ON ( M.transactionProductID = TP.ID)
+               WHERE T.transactionNumber = $1
+             ) AS T2 ON (true)
+    ;
+
+PREPARE getMoneyStats AS
+    SELECT to_char((T1.sum + T2.sum), '$999999D99') AS grossIncome,
+        to_char((T2.cost + T3.cost), '$999999D99') AS expenses,
+        to_char((T1.sum + T2.sum - T2.cost - T3.cost), '$999999D99') AS netProfit
+    FROM TransactionProduct TP
+        JOIN ( SELECT SUM(salesPrice)
+                FROM TransactionProduct TP
+                WHERE isRefunded = false
+            ) AS T1 ON (true)
+        JOIN ( SELECT SUM(M.salesPrice), SUM(MM.unitsNeeded * I.avgCostPerUnit) AS cost
+                FROM TransactionProduct TP
+                    JOIN Modification M ON ( M.transactionProductID = TP.ID)
+                    JOIN MenuModification MM ON ( M.menuModificationID = MM.ID)
+                    JOIN Item I ON ( MM.itemID = I.ID)
+                WHERE TP.isRefunded = false
+            ) AS T2 ON (true)
+        JOIN ( SELECT SUM(PI.unitsNeeded * I.avgCostPerUnit) AS cost
+                FROM TransactionProduct TP
+                    JOIN MenuProduct MP ON ( TP.productID = MP.ID)
+                    JOIN ProductIngredient PI ON ( PI.productID = MP.ID)
+                    JOIN Item I ON ( PI.itemID = I.ID)
+                WHERE TP.isRefunded = false
+            ) AS T3 ON (true)
