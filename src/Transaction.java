@@ -94,7 +94,7 @@ public class Transaction {
             if (newProdMod.executeUpdate() != 1)
                 throw new SQLException();
 
-            // App.conn.commit();
+            App.conn.commit();
             return true;
 
         } catch (SQLException e) {
@@ -126,7 +126,7 @@ public class Transaction {
             if (newProdMod.executeUpdate() != 1)
                 throw new SQLException();
 
-            // App.conn.commit();
+            App.conn.commit();
             return true;
 
         } catch (SQLException e) {
@@ -146,7 +146,7 @@ public class Transaction {
             if (count != 1)
                 throw new SQLException();
 
-            // App.conn.commit();
+            App.conn.commit();
             return true;
 
         } catch (SQLException e) {

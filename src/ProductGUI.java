@@ -150,15 +150,15 @@ public class ProductGUI {
                      int unitsNeeded = i.getInt(2);
                      if (unitsNeeded <= 1) {
                         App.conn.createStatement()
-                              .execute("DELETE FROM ProductIngredient"
-                                    + "WHERE productID = " + i.getInt(3)
-                                    + " AND itemID = " + i.getInt(1));
+                              .execute("DELETE FROM ProductIngredient "
+                                    + " WHERE productID = " + i.getInt(3)
+                                    + " AND itemID = " + i.getInt(1) + ";");
                      } else {
                         App.conn.createStatement()
                               .execute("UPDATE ProductIngredient SET "
                                     + "unitsNeeded = " + (unitsNeeded - 1)
                                     + " WHERE productID = " + id + " AND "
-                                    + " itemID = " + itemID);
+                                    + " itemID = " + itemID + ";");
                      }
                   } catch (SQLException et) {
                      et.printStackTrace();
