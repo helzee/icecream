@@ -374,6 +374,8 @@ public class Gui {
         newTx.finishTransaction();
         Component[] oi = ilp.getComponents(); // order items
         int lastItemTXID = -1;
+
+        Vector<String> removesFromItem = new Vector<String>();
         // start at ilp 1 because 0th index is the title bar (id, name, price) not including the placeholder at the end
         for (int i = 1; i < oi.length; i++){ // go through each item in order and make its respective insert 
             Component[] ic = ((JPanel)oi[i]).getComponents(); // item components
@@ -388,12 +390,14 @@ public class Gui {
                     System.out.println("added mod " + name + " to last item created");
             }
             else if (name.charAt(0) == '-') { // is a mod removal
-                if (lastItemTXID != -1)
+                if (lastItemTXID != -1 && !removesFromItem.contains(id))
                     newTx.removeProductIngredient(lastItemTXID, Integer.parseInt(id)); // add a mod to the last product
                     System.out.println("Removed ingredient " + name + " to last item created");
+                    removesFromItem.add(id);
             }
             else{
                 lastItemTXID = newTx.addProduct(Integer.parseInt(id)); // add a new product
+                removesFromItem.clear();
                 System.out.println("added item " + name);
             }
         }
