@@ -29,10 +29,10 @@ public class ManagerGUI implements ItemListener {
    public void addComponentToPane(Container pane) {
       // Put the JComboBox in a JPanel to get a nicer look.
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
-      String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL,
-            EDIT_EMPLOYEE_PANEL, EDIT_ITEM_PANEL, EDIT_PRODUCT_PANEL,
-            ADD_PRODUCT_PANEL, ADD_MODIFICATION_PANEL, EDIT_MODIFICATION_PANEL,
-            CASHFLOW_PANEL };
+      String comboBoxItems[] = { CASHFLOW_PANEL, ADD_EMPLOYEE_PANEL,
+            ADD_ITEM_PANEL, EDIT_EMPLOYEE_PANEL, EDIT_ITEM_PANEL,
+            EDIT_PRODUCT_PANEL, ADD_PRODUCT_PANEL, ADD_MODIFICATION_PANEL,
+            EDIT_MODIFICATION_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
@@ -65,6 +65,7 @@ public class ManagerGUI implements ItemListener {
       // Create the panel that contains the "cards".
       cards = new JPanel(new CardLayout());
 
+      cards.add(viewCashFlow, CASHFLOW_PANEL);
       cards.add(addEmployee, ADD_EMPLOYEE_PANEL);
       cards.add(addItem, ADD_ITEM_PANEL);
       cards.add(editEmployee, EDIT_EMPLOYEE_PANEL);
@@ -73,7 +74,6 @@ public class ManagerGUI implements ItemListener {
       cards.add(addProduct, ADD_PRODUCT_PANEL);
       cards.add(addModification, ADD_MODIFICATION_PANEL);
       cards.add(editModification, EDIT_MODIFICATION_PANEL);
-      cards.add(viewCashFlow, CASHFLOW_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
@@ -82,6 +82,20 @@ public class ManagerGUI implements ItemListener {
 
    private static JPanel viewCashFlow() throws SQLException {
       JPanel main = new JPanel();
+      JButton backButton = new JButton("Go to Employee page");
+      main.add(backButton);
+
+      backButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            frame.dispose();
+            try {
+               Gui.build();
+            } catch (SQLException et) {
+               et.printStackTrace();
+            }
+
+         }
+      });
       main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
 
       ResultSet rs = App.conn.createStatement().executeQuery(
@@ -97,7 +111,7 @@ public class ManagerGUI implements ItemListener {
                   + " JOIN MenuProduct ON (MenuProduct.id = TransactionProduct.productID)"
                   + " JOIN ProductIngredient ON (ProductIngredient.productID = MenuProduct.id)"
                   + " JOIN Item ON (itemID = Item.id) GROUP BY ProductIngredient"
-                  + " ;");
+                  + " " + " ;");
       rs.next();
       BigDecimal expenses = rs.getBigDecimal(1);
       JLabel totalExpenses = new JLabel(
@@ -134,7 +148,7 @@ public class ManagerGUI implements ItemListener {
 
    private static JPanel createEditEmployeeCard() throws SQLException {
       JPanel editEmployee = new JPanel();
-
+      editEmployee.setLayout(new BoxLayout(editEmployee, BoxLayout.Y_AXIS));
       ResultSet employees = Execute
             .runQuery("SELECT id, firstName, LastName FROM Employee;");
 
@@ -181,6 +195,7 @@ public class ManagerGUI implements ItemListener {
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
       JPanel editEmployee = new JPanel();
+      editEmployee.setLayout(new BoxLayout(editEmployee, BoxLayout.Y_AXIS));
       JTextField[] info = new JTextField[5];
       editEmployee.add(new JLabel("badgenumber"));
       editEmployee.add(info[0] = new JTextField(employee.getString(2), 6));
@@ -252,6 +267,7 @@ public class ManagerGUI implements ItemListener {
 
    private static JPanel createAddEmployeeCard() {
       JPanel addEmployee = new JPanel();
+      addEmployee.setLayout(new BoxLayout(addEmployee, BoxLayout.Y_AXIS));
       JTextField[] info = new JTextField[5];
       addEmployee.add(new JLabel("BadgeNumber"));
       addEmployee.add(info[4] = new JTextField(6));
@@ -284,6 +300,7 @@ public class ManagerGUI implements ItemListener {
 
    private JPanel createAddItemCard() {
       JPanel addItem = new JPanel();
+      addItem.setLayout(new BoxLayout(addItem, BoxLayout.Y_AXIS));
       JTextField[] info = new JTextField[5];
       addItem.add(new JLabel("name"));
       addItem.add(info[0] = new JTextField(32));
@@ -313,7 +330,7 @@ public class ManagerGUI implements ItemListener {
    private static JPanel createEditItemCard(String[] cols, String[] types,
          String entity) throws SQLException {
       JPanel editItem = new JPanel();
-
+      editItem.setLayout(new BoxLayout(editItem, BoxLayout.Y_AXIS));
       String query = "SELECT id";
       for (String s : cols) {
          query += ", " + s;
@@ -366,6 +383,7 @@ public class ManagerGUI implements ItemListener {
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
       JPanel editItem = new JPanel();
+      editItem.setLayout(new BoxLayout(editItem, BoxLayout.Y_AXIS));
       JTextField[] info = new JTextField[colNames.length];
 
       for (int i = 0; i < colNames.length; i++) {

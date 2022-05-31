@@ -20,10 +20,12 @@ public class ModificationGUI {
       itemID = -1;
 
       JPanel addProduct = new JPanel();
+      addProduct.setLayout(new BoxLayout(addProduct, BoxLayout.Y_AXIS));
 
       JTextField[] info = new JTextField[cols.length];
 
       JPanel itemButtons = getItems();
+      itemButtons.setLayout(new BoxLayout(itemButtons, BoxLayout.Y_AXIS));
       addProduct.add(itemButtons);
 
       for (int i = 1; i < cols.length - 1; i++) {
@@ -116,7 +118,7 @@ public class ModificationGUI {
 
    private static JPanel getMods() throws SQLException {
       JPanel editItem = new JPanel();
-
+      editItem.setLayout(new BoxLayout(editItem, BoxLayout.Y_AXIS));
       String query = "SELECT * FROM MenuModification;";
       ResultSet items = Execute.runQuery(query);
 
@@ -168,7 +170,7 @@ public class ModificationGUI {
       itemID = rs.getInt(2);
 
       JPanel addProduct = new JPanel();
-
+      addProduct.setLayout(new BoxLayout(addProduct, BoxLayout.Y_AXIS));
       JTextField[] info = new JTextField[cols.length];
 
       JPanel itemButtons = getItems();
