@@ -75,7 +75,7 @@ PREPARE getTxTotal ( text ) AS
             JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
            WHERE T.transactionNumber = $1
          ) AS T1
-        JOIN ( SELECT SUM(M.salesPrice) AS msum
+        JOIN ( SELECT COALESCE(SUM(M.salesPrice), 0) AS msum
                FROM Transaction T
                 JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
                 JOIN Modification M ON ( M.transactionProductID = TP.ID)
