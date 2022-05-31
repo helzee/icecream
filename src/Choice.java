@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLException;
 
 import javax.swing.*;
 
@@ -30,7 +31,12 @@ public class Choice {
       button1.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
             frame.dispose();
-            Gui.build();
+            try {
+               Gui.build();
+            } catch (SQLException e1) {
+               // TODO Auto-generated catch block
+               e1.printStackTrace();
+            }
          }
       });
       JButton managerButton = new JButton("Manager");
