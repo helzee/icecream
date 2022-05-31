@@ -11,11 +11,12 @@ public class ManagerGUI implements ItemListener {
 
    final static String ADD_EMPLOYEE_PANEL = "Add Employee";
    final static String ADD_ITEM_PANEL = "Add Item";
-   final static String EDIT_EMPLOYEE_PANEL = "Edit/delete Employees";
-   final static String EDIT_ITEM_PANEL = "Edit/delete Items";
-   final static String EDIT_PRODUCT_PANEL = "Edit/delete Product";
+   final static String EDIT_EMPLOYEE_PANEL = "Edit Employees";
+   final static String EDIT_ITEM_PANEL = "Edit Items";
+   final static String EDIT_PRODUCT_PANEL = "Edit Product";
    final static String ADD_PRODUCT_PANEL = "Add Product";
-   final static String DEFINE_PRODUCT_PANEL = "Define product items";
+   final static String ADD_MODIFICATION_PANEL = "Add modification";
+   final static String EDIT_MODIFICATION_PANEL = "Edit modification";
 
    final static String[] ITEM_COLUMNS = { "name", "description",
          "unitisounces", "avgcostperunit" };
@@ -27,7 +28,8 @@ public class ManagerGUI implements ItemListener {
       JPanel comboBoxPane = new JPanel(); // use FlowLayout
       String comboBoxItems[] = { ADD_EMPLOYEE_PANEL, ADD_ITEM_PANEL,
             EDIT_EMPLOYEE_PANEL, EDIT_ITEM_PANEL, EDIT_PRODUCT_PANEL,
-            ADD_PRODUCT_PANEL };
+            ADD_PRODUCT_PANEL, ADD_MODIFICATION_PANEL,
+            EDIT_MODIFICATION_PANEL };
       JComboBox cb = new JComboBox(comboBoxItems);
       cb.setEditable(false);
       cb.addItemListener(this);
@@ -38,12 +40,16 @@ public class ManagerGUI implements ItemListener {
       JPanel editItem = null;
       JPanel editProduct = null;
       JPanel addProduct = null;
+      JPanel addModification = null;
+      JPanel editModification = null;
 
       try {
          editEmployee = createEditEmployeeCard();
          editItem = createEditItemCard(ITEM_COLUMNS, ITEM_COL_TYPES, "Item");
          editProduct = ProductGUI.createEditProductCard();
          addProduct = ProductGUI.createAddProductCard();
+         addModification = ModificationGUI.createAddModificationCard();
+         editModification = ModificationGUI.createEditModificationCard();
 
       } catch (SQLException e) {
          e.printStackTrace();
@@ -60,6 +66,8 @@ public class ManagerGUI implements ItemListener {
       cards.add(editItem, EDIT_ITEM_PANEL);
       cards.add(editProduct, EDIT_PRODUCT_PANEL);
       cards.add(addProduct, ADD_PRODUCT_PANEL);
+      cards.add(addModification, ADD_MODIFICATION_PANEL);
+      cards.add(editModification, EDIT_MODIFICATION_PANEL);
 
       pane.add(comboBoxPane, BorderLayout.PAGE_START);
       pane.add(cards, BorderLayout.CENTER);
@@ -206,11 +214,16 @@ public class ManagerGUI implements ItemListener {
    private static JPanel createAddEmployeeCard() {
       JPanel addEmployee = new JPanel();
       JTextField[] info = new JTextField[5];
-      addEmployee.add(info[4] = new JTextField("BadgeNumber", 6));
-      addEmployee.add(info[0] = new JTextField("FirstName", 32));
-      addEmployee.add(info[1] = new JTextField("LastName", 32));
-      addEmployee.add(info[2] = new JTextField("PhoneNumber", 16));
-      addEmployee.add(info[3] = new JTextField("email", 64));
+      addEmployee.add(new JLabel("BadgeNumber"));
+      addEmployee.add(info[4] = new JTextField(6));
+      addEmployee.add(new JLabel("FirstName"));
+      addEmployee.add(info[0] = new JTextField(32));
+      addEmployee.add(new JLabel("LastName"));
+      addEmployee.add(info[1] = new JTextField(32));
+      addEmployee.add(new JLabel("PhoneNumber"));
+      addEmployee.add(info[2] = new JTextField(16));
+      addEmployee.add(new JLabel("email"));
+      addEmployee.add(info[3] = new JTextField(64));
       JButton enterButton = new JButton("Enter");
       enterButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -233,9 +246,12 @@ public class ManagerGUI implements ItemListener {
    private JPanel createAddItemCard() {
       JPanel addItem = new JPanel();
       JTextField[] info = new JTextField[5];
-      addItem.add(info[0] = new JTextField("name", 32));
-      addItem.add(info[1] = new JTextField("description", 32));
-      addItem.add(info[2] = new JTextField("costPerUnit", 12));
+      addItem.add(new JLabel("name"));
+      addItem.add(info[0] = new JTextField(32));
+      addItem.add(new JLabel("description"));
+      addItem.add(info[1] = new JTextField(32));
+      addItem.add(new JLabel("costPerUnit"));
+      addItem.add(info[2] = new JTextField(12));
       JButton enterButton = new JButton("Enter");
       enterButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
@@ -407,6 +423,7 @@ public class ManagerGUI implements ItemListener {
 
       // Create and set up the content pane.
       ManagerGUI demo = new ManagerGUI();
+
       demo.addComponentToPane(frame.getContentPane());
 
       // Display the window.

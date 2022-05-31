@@ -9,8 +9,6 @@ PREPARE getEmployeeID ( text ) AS
     FROM Employee
     WHERE badgeNumber = $1;
 
-
-
 PREPARE badgeAvail ( text ) AS
     SELECT COUNT(*)
     FROM Employee
@@ -50,7 +48,7 @@ PREPARE getTxProds ( text ) AS
         JOIN TransactionProduct TP ON ( TP.transactionID = T.ID)
         JOIN MenuProduct P ON ( TP.productID = P.ID)
     WHERE T.transactionNumber = $1
-    ORDER BY P.name;
+    ORDER BY TP.ID;
 
 PREPARE getMods ( int ) AS
     SELECT MM.name,  to_char(M.salesPrice, '+99D99')
@@ -58,7 +56,7 @@ PREPARE getMods ( int ) AS
         JOIN MenuModification MM ON ( M.menuModificationID = MM.ID)
         JOIN TransactionProduct TP ON ( M.transactionProductID = TP.ID)
     WHERE TP.ID = $1
-    ORDER BY MM.name;
+    ORDER BY M.ID;
 
 PREPARE getRemoves ( int ) AS
     SELECT I.name
