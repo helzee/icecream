@@ -44,6 +44,7 @@ CREATE TABLE Employee (
 	lastName 		character varying(32) NOT NULL,
 	phoneNumber 		character varying(16) NOT NULL,
 	email 			character varying(100) NOT NULL UNIQUE,
+	isCurrentlyEmployed	boolean NOT NULL,
 
 	PRIMARY KEY (ID)
 );
