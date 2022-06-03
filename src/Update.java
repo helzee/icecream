@@ -27,9 +27,14 @@ public class Update {
 
     public static void updateString(String entity, String column,
             String update, int id) throws SQLException {
-        App.conn.createStatement()
-                .executeUpdate("UPDATE " + entity + " SET " + column + " = \'"
-                        + update + "\' " + "WHERE id = " + id + ";");
+        PreparedStatement updateRows = App.conn.prepareStatement(
+                "UPDATE " + entity + " SET " + column + " = ? WHERE id = ? ;");
+
+        updateRows.setString(1, update);
+        updateRows.setInt(2, id);
+
+        updateRows.executeUpdate();
+        updateRows.close();
     }
 
     public static void updateBoolean(String entity, String column,
@@ -39,21 +44,41 @@ public class Update {
         } else {
             update = "false";
         }
-        App.conn.createStatement().executeUpdate("UPDATE " + entity + " SET "
-                + column + " = " + update + " " + "WHERE id = " + id + ";");
+
+        PreparedStatement updateRows = App.conn.prepareStatement(
+                "UPDATE " + entity + " SET " + column + " = ? WHERE id = ? ;");
+
+        updateRows.setBoolean(1, Boolean.parseBoolean(update));
+        updateRows.setInt(2, id);
+
+        updateRows.executeUpdate();
+        updateRows.close();
     }
 
     public static void updateNumeric(String entity, String column,
             BigDecimal update, int id) throws SQLException {
-        App.conn.createStatement()
-                .executeUpdate("UPDATE " + entity + " SET " + column + " = "
-                        + update.toString() + " " + "WHERE id = " + id + ";");
+
+        PreparedStatement updateRows = App.conn.prepareStatement(
+                "UPDATE " + entity + " SET " + column + " = ? WHERE id = ? ;");
+
+        updateRows.setBigDecimal(1, update);
+        updateRows.setInt(2, id);
+
+        updateRows.executeUpdate();
+        updateRows.close();
     }
 
     public static void updateInt(String entity, String column, int update,
             int id) throws SQLException {
-        App.conn.createStatement().executeUpdate("UPDATE " + entity + " SET "
-                + column + " = " + update + " " + "WHERE id = " + id + ";");
+
+        PreparedStatement updateRows = App.conn.prepareStatement(
+                "UPDATE " + entity + " SET " + column + " = ? WHERE id = ? ;");
+
+        updateRows.setInt(1, update);
+        updateRows.setInt(2, id);
+
+        updateRows.executeUpdate();
+        updateRows.close();
     }
 
 }

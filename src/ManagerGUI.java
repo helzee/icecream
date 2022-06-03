@@ -215,10 +215,9 @@ public class ManagerGUI implements ItemListener {
                      "phoneNumber", "email" };
 
                for (int i = 0; i < colNames.length; i++) {
-                  App.conn.createStatement()
-                        .executeUpdate("UPDATE Employee SET " + colNames[i]
-                              + " = \'" + info[i].getText() + "\' "
-                              + "WHERE id = " + empID + ";");
+
+                  Update.updateString("Employee", colNames[i],
+                        info[i].getText(), empID);
                }
                App.conn.commit();
 
@@ -237,8 +236,8 @@ public class ManagerGUI implements ItemListener {
             int id = (int) ((JButton) e.getSource()).getClientProperty("id");
 
             try {
-               App.conn.createStatement().executeUpdate(
-                     "DELETE FROM Employee WHERE id = " + id + ";");
+
+               Delete.deleteOnCond("Employee", "id = " + id);
                App.conn.commit();
             } catch (SQLException et) {
                et.printStackTrace();
