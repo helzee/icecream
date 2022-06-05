@@ -188,7 +188,7 @@ public class ManagerGUI implements ItemListener {
 
       JPanel editEmployee = new JPanel();
       editEmployee.setLayout(new BoxLayout(editEmployee, BoxLayout.Y_AXIS));
-      JTextField[] info = new JTextField[5];
+      JTextField[] info = new JTextField[6];
       editEmployee.add(new JLabel("badgenumber"));
       editEmployee.add(info[0] = new JTextField(employee.getString(2), 6));
       editEmployee.add(new JLabel("firstName"));
@@ -199,6 +199,8 @@ public class ManagerGUI implements ItemListener {
       editEmployee.add(info[3] = new JTextField(employee.getString(5), 16));
       editEmployee.add(new JLabel("email"));
       editEmployee.add(info[4] = new JTextField(employee.getString(6), 64));
+      editEmployee.add(new JLabel("isCurrentlyEmployed"));
+      editEmployee.add(info[5] = new JTextField(employee.getString(7), 1));
 
       JButton enterButton = new JButton("Update");
       enterButton.putClientProperty("id", empID);
