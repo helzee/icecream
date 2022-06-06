@@ -209,7 +209,8 @@ public class Gui {
         itemBoxLeft.add(DeleteButton,BorderLayout.WEST);
         
         // text displaying id
-        JLabel idText = new JLabel(id);
+        JLabel idText = new JLabel("  ");
+        idText.putClientProperty("id", id);
         itemBoxLeft.add(idText, BorderLayout.EAST);
 
         // text displaying name
@@ -290,7 +291,8 @@ public class Gui {
         itemBoxLeft.add(DeleteButton,BorderLayout.WEST);
         
         // text displaying id
-        JLabel idText = new JLabel(id);
+        JLabel idText = new JLabel("  ");
+        idText.putClientProperty("id", id);
         itemBoxLeft.add(idText, BorderLayout.EAST);
 
         // text displaying name
@@ -351,7 +353,7 @@ public class Gui {
         itemBoxLeft.setMaximumSize(new Dimension(80,25));
         itemBox.add(itemBoxLeft,BorderLayout.WEST);
 
-        JLabel idText = new JLabel("ID", SwingConstants.CENTER);
+        JLabel idText = new JLabel("  ", SwingConstants.CENTER);
         idText.setMaximumSize(idText.getPreferredSize());
         idText.setBorder(BorderFactory.createEmptyBorder(0,50,0,0));
         itemBoxLeft.add(idText, BorderLayout.EAST);
@@ -422,7 +424,7 @@ public class Gui {
         // start at ilp 1 because 0th index is the title bar (id, name, price) not including the placeholder at the end
         for (int i = 1; i < oi.length; i++){ // go through each item in order and make its respective insert 
             Component[] ic = ((JPanel)oi[i]).getComponents(); // item components
-            String id = ((JLabel)((JPanel)ic[0]).getComponent(1)).getText(); // should be itemboxleft
+            String id = (String)((JLabel)((JPanel)ic[0]).getComponent(1)).getClientProperty("id"); // should be itemboxleft
             String name = (((JLabel)ic[1])).getText(); // should be itemboxleft
             //System.out.println(name);
             //System.out.println(id);
@@ -552,7 +554,7 @@ public class Gui {
         }
 
         Component[] ic = (selectedItem).getComponents(); // item components
-        String projID = ((JLabel)((JPanel)ic[0]).getComponent(1)).getText(); // should be itemboxleft
+        String projID = (String)((JLabel)((JPanel)ic[0]).getComponent(1)).getClientProperty("id"); // should be itemboxleft
         String[] idsitem = Format.rsToArray(Execute.runQuery("SELECT itemId FROM ProductIngredient WHERE productID = " + projID + ";"));
 
         for (String id : idsitem) {
