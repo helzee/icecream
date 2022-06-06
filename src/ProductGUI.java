@@ -271,14 +271,14 @@ public class ProductGUI {
             "SELECT * FROM " + entity + " WHERE id =" + id + ";");
       item.next();
 
-      JFrame frame = new JFrame("Edit Item");
+      JFrame frame = new JFrame("Edit Product");
       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
       JPanel editItem = new JPanel();
       editItem.setLayout(new BoxLayout(editItem, BoxLayout.Y_AXIS));
       JTextField[] info = new JTextField[cols.length];
 
-      for (int i = 0; i < cols.length; i++) {
+      for (int i = 1; i < cols.length; i++) {
          int size = 32;
          if (types[i].toLowerCase().equals("string")) {
             size = 40;
