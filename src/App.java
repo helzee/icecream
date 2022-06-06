@@ -16,11 +16,22 @@ public class App {
 
         // Disappears after run time, must run every time
         Execute.executeFile("env/preparedQueries.psql");
-        // Execute.executeFile("env/populateData.psql");
+        // killEmptyTransactions();
 
         // basicTest1();
-        // Choice.build();
         Gui.build();
+    }
+
+    private static void killEmptyTransactions() throws SQLException {
+        Execute.printQuery(
+                "SELECT * FROM Transaction T LEFT JOIN TransactionProduct TP ON TP.transactionID = T.ID WHERE TP.ID IS NULL;");
+        st.executeUpdate(
+                "DELETE FROM Transaction WHERE ID IN (SELECT T.ID FROM Transaction T LEFT JOIN TransactionProduct TP ON TP.transactionID = T.ID WHERE TP.ID IS NULL);");
+
+        Execute.printQuery(
+                "SELECT * FROM Transaction T LEFT JOIN TransactionProduct TP ON TP.transactionID = T.ID WHERE TP.ID IS NULL;");
+        conn.commit();
+
     }
 
     private static void setUpConn() throws SQLException {
