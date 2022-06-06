@@ -221,6 +221,8 @@ public class ManagerGUI implements ItemListener {
                   Update.updateString("Employee", colNames[i],
                         info[i].getText(), empID);
                }
+               Update.updateBoolean("Employee", "isCurrentlyEmployed",
+                     info[5].getText(), empID);
                App.conn.commit();
 
             } catch (SQLException et) {
