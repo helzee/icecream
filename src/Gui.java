@@ -432,7 +432,7 @@ public class Gui {
     public static void finishOrder() throws SQLException {
         Transaction newTx = new Transaction(
                 (int) (WorkingEmployee.getClientProperty("id"))); // CHANGE **
-        newTx.finishTransaction();
+        //newTx.finishTransaction();
         Component[] oi = ilp.getComponents(); // order items
         int lastItemTXID = -1;
 
@@ -448,18 +448,21 @@ public class Gui {
             // System.out.println(id);
 
             if (name.charAt(0) == '+') { // is a mod
-                if (lastItemTXID != -1)
+                if (lastItemTXID != -1){
                     newTx.addProductModification(lastItemTXID,
                             Integer.parseInt(id)); // add a mod to the last product
-                System.out.println(
+                    System.out.println(
                         "added mod " + name + " to last item created");
+                } else {App.conn.rollback(); System.out.println("cannot complete"); return;}
             } else if (name.charAt(0) == '-') { // is a mod removal
-                if (lastItemTXID != -1 && !removesFromItem.contains(id))
+                if (lastItemTXID == -1){App.conn.rollback(); System.out.println("cannot complete"); return;}
+                if (lastItemTXID != -1 && !removesFromItem.contains(id)) {
                     newTx.removeProductIngredient(lastItemTXID,
                             Integer.parseInt(id)); // add a mod to the last product
-                System.out.println("Removed ingredient " + name
+                    System.out.println("Removed ingredient " + name
                         + " to last item created");
-                removesFromItem.add(id);
+                    removesFromItem.add(id);
+                }
             } else {
                 lastItemTXID = newTx.addProduct(Integer.parseInt(id)); // add a new product
                 removesFromItem.clear();
@@ -469,6 +472,7 @@ public class Gui {
         newTx.finishTransaction();
         showReciept(newTx.getReceipt());
         clearILP();
+        System.out.println("executed order");
     }
 
     private static void calculateTotal() {
@@ -711,7 +715,7 @@ public class Gui {
         // System.out.println(txNum + " " + Format.rsToString(numProds));
         // numProds.next();
         if (numProds.next() && numProds.getInt(1) <= 0) {
-            System.out.println("BROKE");
+            System.out.println("BROKE " + txNum);
             return true;
         }
         // System.out.println(" numba " + numProds.getInt(1));
