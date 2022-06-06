@@ -15,6 +15,7 @@ public class Update {
 
             int count = updateRows.executeUpdate();
             updateRows.close();
+            App.conn.commit();
             return count;
 
         } catch (SQLException e) {
