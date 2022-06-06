@@ -39,16 +39,12 @@ public class Update {
 
     public static void updateBoolean(String entity, String column,
             String update, int id) throws SQLException {
-        if (update.toLowerCase().contains("t")) {
-            update = "true";
-        } else {
-            update = "false";
-        }
+        boolean updateBool = update.toLowerCase().contains("t");
 
         PreparedStatement updateRows = App.conn.prepareStatement(
                 "UPDATE " + entity + " SET " + column + " = ? WHERE id = ? ;");
 
-        updateRows.setBoolean(1, Boolean.parseBoolean(update));
+        updateRows.setBoolean(1, updateBool);
         updateRows.setInt(2, id);
 
         updateRows.executeUpdate();

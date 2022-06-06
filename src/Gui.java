@@ -22,6 +22,7 @@ public class Gui {
     static JPanel selectedItem;
     static Color normal = new Color(238,238,238);
     static JLabel WorkingEmployee;
+    static int transactionResultLimit;
 
     private static final String WINDOW_NAME = "Frozen Rock Ice Cream Shop";
     private static final int WIDTH = 1000;
@@ -108,7 +109,8 @@ public class Gui {
         finishOrder.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    finishOrder();
+                    if (ilp.getComponents().length > 1)
+                        finishOrder();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -125,10 +127,23 @@ public class Gui {
                 }
             }
         });
+        
+        JButton pastTransactions = new JButton("Past Transactions");
+        pastTransactions.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    showPastTransactions();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        });
 
         getItemButtons();
 
+
         panelNavToolBar.add(buttonNavToManager);
+        panelNavToolBar.add(pastTransactions);
         panelNavToolBar.add(finishOrder);
         panelNavToolBar.add(employeeSelect);
         panelNavToolBar.add(WorkingEmployee);
@@ -170,12 +185,8 @@ public class Gui {
                 try {
                     deleteItemAndMod(itemBox);
                 } catch (SQLException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
-                //ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
-                //ilp.revalidate(); // refresh
-                //ilp.repaint();
             }
         });
         DeleteButton.setMaximumSize(new Dimension(20,20));
@@ -537,6 +548,126 @@ public class Gui {
         }
         ilp.revalidate(); // refresh
         ilp.repaint();
+    }
+
+    private static void showPastTransactions() throws SQLException {
+        transactionResultLimit = 100;
+
+        JFrame newframe = new JFrame("Past Transactions");
+        
+        JPanel panel = new JPanel();
+        JScrollPane scrollpanel = new JScrollPane(panel);
+        scrollpanel.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollpanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        ResultSet transactionRS = Execute.runQuery("SELECT id, transactionNumber, timeCompleted FROM Transaction ORDER BY timeCompleted DESC LIMIT " + transactionResultLimit + ";");
+
+        while (transactionRS.next()) {
+            JPanel tpanel = new JPanel(new BorderLayout());
+            tpanel.setMaximumSize(new Dimension(10000,40));
+            tpanel.setSize(new Dimension(10000,40));
+            JLabel tlabel = new JLabel( "  " +transactionRS.getString(2) + "  " + transactionRS.getString(3) + "    ");
+
+            JPanel tpanelLeft = new JPanel(new BorderLayout());
+            tpanelLeft.setMaximumSize(new Dimension(40,40));
+            tpanelLeft.setSize(40,40);
+            tpanelLeft.add(tlabel);
+
+            JPanel tpanelRight = new JPanel(new FlowLayout());
+            tpanelRight.setSize(40,40);
+            tpanelRight.setMaximumSize(new Dimension(40,40));
+
+            tpanel.add(tpanelLeft, BorderLayout.WEST);
+            tpanel.add(tpanelRight, BorderLayout.EAST);
+
+            String txNum = transactionRS.getString(2);
+
+            JButton RecieptButton = new JButton("Reciept");
+            RecieptButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                        showReciept(Receipt.getReceipt(txNum));
+                }
+            });
+            tpanelRight.add(RecieptButton);
+
+            if (!TransactionIsRefunded(txNum)){
+                JButton RefundButton = new JButton("Refund");
+                RefundButton.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        try {
+                            if (!TransactionIsRefunded(txNum))
+                                RefundTransactionProducts(txNum);
+                        } catch (SQLException e1) {
+                            e1.printStackTrace();
+                        }
+                        tpanelRight.remove(RefundButton); // can no longer refund the other
+                        tpanelRight.revalidate(); // refresh
+                        tpanelRight.repaint();
+                    }
+                });
+                tpanelRight.add(RefundButton);
+                RefundButton.setSize(25,25);
+                //RefundButton.setMaximumSize(new Dimension(10,10));
+            }
+            
+            panel.add(tpanel);
+        }
+        
+        newframe.add(scrollpanel);
+        newframe.setSize(600,600);
+        newframe.setVisible(true);
+    }
+
+    private static boolean TransactionIsRefunded(String txNum) throws SQLException {
+        ResultSet numProds = Execute.runQuery(
+            "SELECT COALESCE(count(TransactionProduct.ID), 0) as num " +
+            "FROM Transaction " +
+            "JOIN TransactionProduct on (TransactionProduct.transactionID = Transaction.ID) " +
+            "WHERE Transaction.transactionNumber = '" + txNum + "' ;"
+            //"GROUP BY TransactionProduct.transactionID;"
+        );
+        //System.out.println(txNum + "  " + Format.rsToString(numProds));
+        //numProds.next();
+        if (numProds.next() && numProds.getInt(1) <= 0) { System.out.println("BROKE"); return true; }
+        //System.out.println(" numba " + numProds.getInt(1));
+        
+
+        ResultSet transIsRefunded = Execute.runQuery(
+            "SELECT COALESCE(isRefunded,'t'::boolean) " +
+            "FROM Transaction " +
+            "JOIN TransactionProduct on (TransactionProduct.transactionID = Transaction.ID) " +
+            "WHERE Transaction.transactionNumber = '" + txNum + "'" +
+            "ORDER BY TransactionProduct.id DESC;"
+        );
+        //System.out.println(txNum + "  " + Format.rsToString(transIsRefunded));
+
+        if (transIsRefunded.next() && transIsRefunded.getBoolean(1)){
+            //System.out.println("TRUE");
+            return true;
+        }
+        //System.out.println("FALSE");
+        return false;
+    }
+    
+    private static void RefundTransactionProducts(String txNum) throws SQLException {
+        ResultSet txProducts = Execute.runQuery(
+            "SELECT TP.id " +
+            "FROM Transaction T " +
+            "JOIN TransactionProduct TP on (TP.transactionID = T.ID) " +
+            "WHERE T.transactionNumber = '" + txNum + "'" + 
+            "ORDER BY TP.id DESC;"
+        );
+
+        //System.out.println(txNum + "  " + Format.rsToString(txProducts));
+
+        while(txProducts.next()){
+            //System.out.println("removed" + txProducts.getInt(1));
+            Update.updateBoolean("TransactionProduct", "isRefunded", "t", txProducts.getInt(1));
+            App.conn.commit();
+        }
+
+        TransactionIsRefunded(txNum);
     }
 }
 

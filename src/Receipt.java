@@ -91,6 +91,22 @@ public class Receipt {
             e.printStackTrace();
             return "";
         }
+        
+        //added by griffin for refunding
+        try {
+                ResultSet transIsRefunded = Execute.runQuery(
+                "SELECT isRefunded " +
+                "FROM Transaction " +
+                "JOIN TransactionProduct on (TransactionProduct.transactionID = Transaction.ID) " +
+                "WHERE Transaction.TransactionNumber = '" + txNumber + "';"
+                );
+                transIsRefunded.next();
+                if (transIsRefunded.getBoolean(1)){
+                toReturn += "\nORDER REFUNDED\n";
+                }
+        } catch (SQLException e) {
+                e.printStackTrace();
+        }
 
         return toReturn;
     }
