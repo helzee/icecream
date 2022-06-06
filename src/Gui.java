@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -23,6 +24,7 @@ public class Gui {
     static Color normal = new Color(238,238,238);
     static JLabel WorkingEmployee;
     static int transactionResultLimit;
+    static JLabel OrderPrice;
 
     private static final String WINDOW_NAME = "Frozen Rock Ice Cream Shop";
     private static final int WIDTH = 1000;
@@ -52,7 +54,7 @@ public class Gui {
         ilp.setLayout(new BoxLayout(ilp, BoxLayout.Y_AXIS));
 
         panelWorkspace.add(scrollPanelLeft);
-        panelRight = new JPanel( new GridLayout(3,1));
+        panelRight = new JPanel( new GridLayout(4,1));
         panelWorkspace.add(panelRight);
 
 
@@ -148,6 +150,19 @@ public class Gui {
         panelNavToolBar.add(employeeSelect);
         panelNavToolBar.add(WorkingEmployee);
 
+        // add the order total cost
+        JPanel TotalPanel = new JPanel(new GridLayout(2,1));
+        JLabel orderTotalLabel = new JLabel("PRE-TAX TOTAL:", SwingConstants.CENTER);
+        orderTotalLabel.setFont(new Font("Dialog", Font.PLAIN, 40));
+        orderTotalLabel.setBorder(BorderFactory.createEmptyBorder(20,0,0,0));
+        TotalPanel.add(orderTotalLabel);
+        OrderPrice = new JLabel("$0.00", SwingConstants.CENTER);
+        OrderPrice.setFont(new Font("Dialog", Font.PLAIN, 30));
+        OrderPrice.setBorder(BorderFactory.createEmptyBorder(0,0,20,0));
+        TotalPanel.add(OrderPrice);
+
+        panelRight.add(TotalPanel);
+
         frame.setVisible(true);
     }
 
@@ -184,6 +199,7 @@ public class Gui {
                 }
                 try {
                     deleteItemAndMod(itemBox);
+                    calculateTotal();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -228,6 +244,7 @@ public class Gui {
         }
 
         updateRemoveButtons();
+        calculateTotal();
     }
 
     private static void addItemMod(String id, String name, String price, Boolean add) {
@@ -255,15 +272,15 @@ public class Gui {
         JButton DeleteButton = new JButton("X");
         DeleteButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (selectedItem == itemBox)
+                if (selectedItem == itemBox) {
                     try {
                         selectItem(null);
                         updateRemoveButtons();
                     } catch (SQLException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
-
+                }
+                calculateTotal();
                 ilp.remove(itemBox); // remove the item from the Item Left Panel (ilp)
                 ilp.revalidate(); // refresh
                 ilp.repaint();
@@ -365,6 +382,7 @@ public class Gui {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         addItem(id, name, price);
+                        calculateTotal();
                     } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
@@ -386,6 +404,7 @@ public class Gui {
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     addItemMod(id, name, price, true);
+                    calculateTotal();
                 }
             });
             button.setBackground(new Color(206, 240, 209));
@@ -405,8 +424,8 @@ public class Gui {
             Component[] ic = ((JPanel)oi[i]).getComponents(); // item components
             String id = ((JLabel)((JPanel)ic[0]).getComponent(1)).getText(); // should be itemboxleft
             String name = (((JLabel)ic[1])).getText(); // should be itemboxleft
-            System.out.println(name);
-            System.out.println(id);
+            //System.out.println(name);
+            //System.out.println(id);
 
             if (name.charAt(0) == '+') { // is a mod
                 if (lastItemTXID != -1)
@@ -428,6 +447,20 @@ public class Gui {
         newTx.finishTransaction();
         showReciept(newTx.getReceipt());
         clearILP();
+    }
+
+    private static void calculateTotal(){
+        Component[] oi = ilp.getComponents(); // order items
+        DecimalFormat df = new DecimalFormat("0.00");
+        Float total = 0.00f;
+        // start at ilp 1 because 0th index is the title bar (id, name, price) not including the placeholder at the end
+        for (int i = 1; i < oi.length; i++){ // go through each item in order and make its respective insert 
+            Component[] ic = ((JPanel)oi[i]).getComponents(); // item components
+            String price = (((JLabel)ic[2])).getText(); // should be itemboxleft
+            total += Float.parseFloat(price);
+            
+        }
+        OrderPrice.setText(df.format(total));
     }
 
     private static void showReciept(String s) {
@@ -509,6 +542,8 @@ public class Gui {
     }
 
     private static void updateRemoveButtons() throws SQLException {
+        calculateTotal();
+
         panelModRemoves.removeAll();
         if (selectedItem == null){
             panelModRemoves.revalidate(); // refresh
@@ -542,12 +577,13 @@ public class Gui {
         selectItem(null);
         updateRemoveButtons();
         if (ilp.getComponentCount() <= 1) return;
-        while (ilp.getComponent(1) != null){
+        while (ilp.getComponent(1) != null){ 
             ilp.remove(ilp.getComponent(1));
             if (ilp.getComponentCount() <= 1) break;
         }
         ilp.revalidate(); // refresh
         ilp.repaint();
+        calculateTotal();
     }
 
     private static void showPastTransactions() throws SQLException {
@@ -669,6 +705,8 @@ public class Gui {
 
         TransactionIsRefunded(txNum);
     }
+
+    
 }
 
 
